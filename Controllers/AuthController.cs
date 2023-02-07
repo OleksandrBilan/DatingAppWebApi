@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
-using DatingApp.DB.Models;
 using DatingApp.DTOs;
+using DatingApp.Models;
 using DatingApp.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DatingApp.Controllers
@@ -41,15 +42,20 @@ namespace DatingApp.Controllers
 
             try
             {
-                bool succeeded = await _authService.LoginAsync(request.Email, request.Password);
-                if (succeeded)
-                    return Ok();
-                else
-                    return BadRequest("Failed to log in");
+                var user = await _authService.LoginAsync(request.Email, request.Password);
+                var expireDateTime = DateTime.Now.AddMinutes(30);
+                var accessToken = await _authService.GenerateAccessTokenAsync(user, expireDateTime);
+
+                return Ok(new 
+                { 
+                    user = _mapper.Map<UserDto>(user),
+                    access_token = accessToken,
+                    expires_at = expireDateTime
+                });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return Unauthorized(ex.Message);
             }
         }
     }

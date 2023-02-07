@@ -1,4 +1,4 @@
-﻿using DatingApp.DB.Models;
+﻿using DatingApp.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

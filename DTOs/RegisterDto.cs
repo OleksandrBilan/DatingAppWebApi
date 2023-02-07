@@ -1,4 +1,4 @@
-﻿using DatingApp.DB.Models;
+﻿using DatingApp.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace DatingApp.DTOs

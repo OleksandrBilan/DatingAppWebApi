@@ -1,5 +1,4 @@
-﻿using DatingApp.DB.Models;
-using DatingApp.DTOs;
+﻿using DatingApp.Models;
 
 namespace DatingApp.Services.Interfaces
 {
@@ -7,6 +6,8 @@ namespace DatingApp.Services.Interfaces
     {
         Task<bool> Register(User user, string password);
 
-        Task<bool> LoginAsync(string email, string password);
+        Task<User> LoginAsync(string email, string password);
+
+        Task<string> GenerateAccessTokenAsync(User user, DateTime expireDateTime);
     }
 }

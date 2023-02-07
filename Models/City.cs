@@ -1,4 +1,4 @@
-﻿namespace DatingApp.DB.Models
+﻿namespace DatingApp.Models
 {
     public class City
     {
