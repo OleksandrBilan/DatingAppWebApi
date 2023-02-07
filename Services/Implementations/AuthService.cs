@@ -1,9 +1,11 @@
 ﻿using DatingApp.DB;
 using DatingApp.Models;
+using DatingApp.Services.Helpers;
 using DatingApp.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Policy;
 using System.Text;
 
 namespace DatingApp.Services.Implementations
@@ -14,13 +16,29 @@ namespace DatingApp.Services.Implementations
         private readonly SignInManager<User> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly AppDbContext _dbContext;
+        private readonly EmailHelper _emailHelper;
 
-        public AuthService(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration, AppDbContext dbContext)
+        public AuthService(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration, AppDbContext dbContext, EmailHelper emailHelper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _dbContext = dbContext;
+            _emailHelper = emailHelper;
+        }
+
+        public async Task<bool> ConfirmEmailAsync(string userId, string confirmationToken)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user is not null)
+            {
+                var result = await _userManager.ConfirmEmailAsync(user, confirmationToken);
+                if (result.Succeeded)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public async Task<string> GenerateAccessTokenAsync(User user, DateTime expireDateTime)
@@ -56,9 +74,26 @@ namespace DatingApp.Services.Implementations
             }
         }
 
-        public async Task<bool> Register(User user, string password)
+        public async Task<bool> RegisterAsync(User user, string password)
         {
             var result = await _userManager.CreateAsync(user, password);
+
+            if (result.Succeeded)
+            {
+                var confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+                /* Create a link to confirm email
+                var confirmationLink = new Url("/Account/ConfirmEmail",
+                        values: new { userId = user.Id, token = confirmationToken });
+                */
+
+                await _emailHelper.SendMailAsync(
+                    "oleksandrbilan282002@gmail.com",
+                    user.Email,
+                    "Email Confirmation",
+                    $"Please click on the link to confirm your email: ***will be added after front-end part***{confirmationToken}");
+            }
+            
             return result.Succeeded;
         }
     }

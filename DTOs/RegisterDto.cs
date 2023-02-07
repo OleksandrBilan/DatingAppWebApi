@@ -26,7 +26,7 @@ namespace DatingApp.DTOs
         public Sex Sex { get; set; }
 
         [Required]
-        public IEnumerable<Sex> SexPreferences { get; set; }
+        public Sex SexPreferences { get; set; }
 
         [Required]
         public string Description { get; set; }

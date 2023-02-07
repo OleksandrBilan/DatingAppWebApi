@@ -2,7 +2,6 @@
 using DatingApp.DTOs;
 using DatingApp.Models;
 using DatingApp.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DatingApp.Controllers
@@ -26,7 +25,7 @@ namespace DatingApp.Controllers
                 return BadRequest(ModelState);
 
             var user = _mapper.Map<User>(request);
-            bool succeeded = await _authService.Register(user, request.Password);
+            bool succeeded = await _authService.RegisterAsync(user, request.Password);
 
             if (succeeded)
                 return Ok();
@@ -57,6 +56,17 @@ namespace DatingApp.Controllers
             {
                 return Unauthorized(ex.Message);
             }
+        }
+
+        [HttpPost("confirmEmail")]
+        public async Task<IActionResult> ConfirmEmailAsync([FromBody] ConfirmEmailDto request)
+        {
+            bool confirmed = await _authService.ConfirmEmailAsync(request.UserId, request.ConfirmationToken);
+
+            if (confirmed)
+                return Ok();
+            else
+                return BadRequest();
         }
     }
 }

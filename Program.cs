@@ -1,5 +1,6 @@
 using DatingApp.DB;
 using DatingApp.Models;
+using DatingApp.Services.Helpers;
 using DatingApp.Services.Implementations;
 using DatingApp.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -30,10 +31,12 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     options.Lockout.MaxFailedAccessAttempts = 5;
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
     options.User.RequireUniqueEmail = true;
-    options.SignIn.RequireConfirmedEmail = false;
+    options.SignIn.RequireConfirmedEmail = true;
 
 })
-    .AddEntityFrameworkStores<AppDbContext>();
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
+
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
@@ -48,7 +51,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SMTP"));
+
 builder.Services.AddTransient<IAuthService, AuthService>();
+builder.Services.AddTransient<EmailHelper>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
