@@ -5,7 +5,6 @@ using DatingApp.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Policy;
 using System.Text;
 
 namespace DatingApp.Services.Implementations
@@ -27,16 +26,18 @@ namespace DatingApp.Services.Implementations
             _emailHelper = emailHelper;
         }
 
-        public async Task<bool> ConfirmEmailAsync(string userId, string confirmationToken)
+        public async Task<bool> ConfirmEmailAsync(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user is not null)
             {
+                if (user.EmailConfirmed)
+                    return true;
+
+                var confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 var result = await _userManager.ConfirmEmailAsync(user, confirmationToken);
                 if (result.Succeeded)
-                {
                     return true;
-                }
             }
             return false;
         }
@@ -80,8 +81,7 @@ namespace DatingApp.Services.Implementations
 
             if (result.Succeeded)
             {
-                var confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var confirmationLink = $"{_configuration.GetValue<string>("EmailConfirmationLink")}/{user.Id}/{confirmationToken}";
+                var confirmationLink = $"{_configuration.GetValue<string>("EmailConfirmationLink")}/{user.Id}";
 
                 await _emailHelper.SendMailAsync(
                     user.Email,

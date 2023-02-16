@@ -6,8 +6,5 @@ namespace DatingApp.DTOs
     {
         [Required]
         public string UserId { get; set; }
-
-        [Required]
-        public string ConfirmationToken { get; set; }
     }
 }

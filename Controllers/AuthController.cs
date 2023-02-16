@@ -61,7 +61,10 @@ namespace DatingApp.Controllers
         [HttpPost("confirmEmail")]
         public async Task<IActionResult> ConfirmEmailAsync([FromBody] ConfirmEmailDto request)
         {
-            bool confirmed = await _authService.ConfirmEmailAsync(request.UserId, request.ConfirmationToken);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            bool confirmed = await _authService.ConfirmEmailAsync(request.UserId);
 
             if (confirmed)
                 return Ok();
