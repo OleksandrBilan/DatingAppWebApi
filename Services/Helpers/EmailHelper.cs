@@ -13,9 +13,9 @@ namespace DatingApp.Services.Helpers
             _smtpSettings = smtpSettings;
         }
 
-        public async Task SendMailAsync(string from, string to, string subject, string text)
+        public async Task SendMailAsync(string to, string subject, string text)
         {
-            var mailMessage = new MailMessage(from, to, subject, text);
+            var mailMessage = new MailMessage(_smtpSettings.Value.SenderEmail, to, subject, text);
 
             using (var emailClient = new SmtpClient(_smtpSettings.Value.Host, _smtpSettings.Value.Port))
             {
@@ -34,5 +34,6 @@ namespace DatingApp.Services.Helpers
         public int Port { get; set; }
         public string User { get; set; }
         public string Password { get; set; }
+        public string SenderEmail { get; set; }
     }
 }

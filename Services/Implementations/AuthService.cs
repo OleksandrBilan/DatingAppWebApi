@@ -81,17 +81,12 @@ namespace DatingApp.Services.Implementations
             if (result.Succeeded)
             {
                 var confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-
-                /* Create a link to confirm email
-                var confirmationLink = new Url("/Account/ConfirmEmail",
-                        values: new { userId = user.Id, token = confirmationToken });
-                */
+                var confirmationLink = $"{_configuration.GetValue<string>("EmailConfirmationLink")}/{user.Id}/{confirmationToken}";
 
                 await _emailHelper.SendMailAsync(
-                    "oleksandrbilan282002@gmail.com",
                     user.Email,
                     "Email Confirmation",
-                    $"Please click on the link to confirm your email: ***will be added after front-end part***{confirmationToken}");
+                    $"Please click on the link to confirm your email:\n {confirmationLink}");
             }
             
             return result.Succeeded;
