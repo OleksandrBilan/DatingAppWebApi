@@ -1,5 +1,5 @@
 ﻿using DatingApp.DB;
-using DatingApp.Models;
+using DatingApp.DB.Models;
 using DatingApp.Services.Helpers;
 using DatingApp.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;

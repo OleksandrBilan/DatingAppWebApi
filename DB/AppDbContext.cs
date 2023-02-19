@@ -1,4 +1,4 @@
-﻿using DatingApp.Models;
+﻿using DatingApp.DB.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,19 +8,32 @@ namespace DatingApp.DB
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
+        public DbSet<Country> Countries { get; set; }
         public DbSet<City> Cities { get; set; }
+        public DbSet<Sex> Sex { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<City>().HasData(
-                new City(1, "Київ"),
-                new City(2, "Львів"),
-                new City(3, "Івано-Франківськ"),
-                new City(4, "Луцьк"),
-                new City(5, "Тернопіль")
+            builder.Entity<Sex>().HasData(
+                new Sex { Id = 1, Name = "Not Mentioned"},
+                new Sex { Id = 2, Name = "Male"},
+                new Sex { Id = 3, Name = "Female"}
             );
+
+            builder.Entity<User>()
+                .HasOne(x => x.Sex)
+                .WithMany(x => x.UsersWithSuchSex)
+                .HasForeignKey(x => x.SexId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
+            builder.Entity<User>()
+                .HasOne(x => x.SexPreferences)
+                .WithMany(x => x.UsersWithSuchSexPreferences)
+                .HasForeignKey(x => x.SexPreferencesId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
         }
     }
 }

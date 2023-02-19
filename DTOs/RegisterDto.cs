@@ -1,5 +1,4 @@
-﻿using DatingApp.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace DatingApp.DTOs
 {
@@ -23,10 +22,10 @@ namespace DatingApp.DTOs
         public int CityId { get; set; }
 
         [Required]
-        public Sex Sex { get; set; }
+        public int SexId { get; set; }
 
         [Required]
-        public Sex SexPreferences { get; set; }
+        public int SexPreferencesId { get; set; }
 
         [Required]
         public string Description { get; set; }

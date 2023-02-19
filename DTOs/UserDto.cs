@@ -1,4 +1,4 @@
-﻿using DatingApp.Models;
+﻿using DatingApp.DB.Models;
 
 namespace DatingApp.DTOs
 {
@@ -8,9 +8,9 @@ namespace DatingApp.DTOs
 
         public DateTime BirthDate { get; set; }
 
-        public Sex Sex { get; set; }
+        public int SexId { get; set; }
 
-        public Sex SexPreferences { get; set; }
+        public int SexPreferencesId { get; set; }
 
         public string Description { get; set; }
 

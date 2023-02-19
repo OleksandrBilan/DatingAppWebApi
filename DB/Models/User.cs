@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace DatingApp.Models
+namespace DatingApp.DB.Models
 {
     public class User : IdentityUser
     {
@@ -8,14 +8,15 @@ namespace DatingApp.Models
 
         public DateTime BirthDate { get; set; }
 
-        public Sex Sex { get; set; }
-
-        public Sex SexPreferences { get; set; }
-
         public string Description { get; set; }
 
         public int CityId { get; set; }
-
         public City City { get; set; }
+
+        public int SexId { get; set; }
+        public Sex Sex { get; set; }
+
+        public int SexPreferencesId { get; set; }
+        public Sex SexPreferences { get; set; }
     }
 }

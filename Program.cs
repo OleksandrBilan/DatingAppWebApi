@@ -1,5 +1,5 @@
 using DatingApp.DB;
-using DatingApp.Models;
+using DatingApp.DB.Models;
 using DatingApp.Services.Helpers;
 using DatingApp.Services.Implementations;
 using DatingApp.Services.Interfaces;
@@ -54,6 +54,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SMTP"));
 
+builder.Services.AddScoped<ILookupService, LookupService>();
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<EmailHelper>();
 
