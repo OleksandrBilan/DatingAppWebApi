@@ -42,14 +42,15 @@ namespace DatingApp.Controllers
             try
             {
                 var user = await _authService.LoginAsync(request.Email, request.Password);
+                var userDto = _mapper.Map<UserDto>(user);
                 var expireDateTime = DateTime.Now.AddMinutes(30);
                 var accessToken = await _authService.GenerateAccessTokenAsync(user, expireDateTime);
 
                 return Ok(new 
                 { 
-                    user = _mapper.Map<UserDto>(user),
-                    access_token = accessToken,
-                    expires_at = expireDateTime
+                    user = userDto,
+                    accessToken = accessToken,
+                    expiresAt = expireDateTime.ToUniversalTime(),
                 });
             }
             catch (Exception ex)

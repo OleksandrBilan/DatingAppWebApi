@@ -1,6 +1,4 @@
-﻿using DatingApp.DB.Models;
-
-namespace DatingApp.DTOs
+﻿namespace DatingApp.DTOs
 {
     public class UserDto
     {
@@ -14,6 +12,8 @@ namespace DatingApp.DTOs
 
         public string Description { get; set; }
 
-        public City City { get; set; }
+        public CountryDto Country { get; set; }
+
+        public CityDto City { get; set; }
     }
 }

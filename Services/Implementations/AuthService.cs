@@ -64,7 +64,8 @@ namespace DatingApp.Services.Implementations
             if (result.Succeeded)
             {
                 var user = await _userManager.FindByEmailAsync(email);
-                user.City = _dbContext.Cities.FirstOrDefault(c => c.Id == user.CityId);
+                user.Country = await _dbContext.Countries.FirstOrDefaultAsync(c => c.Code == user.CountryCode);
+                user.City = await _dbContext.Cities.FirstOrDefaultAsync(c => c.Id == user.CityId);
                 return user;
             }
             else
