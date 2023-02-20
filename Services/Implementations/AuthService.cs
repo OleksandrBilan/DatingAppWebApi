@@ -3,6 +3,7 @@ using DatingApp.DB.Models;
 using DatingApp.Services.Helpers;
 using DatingApp.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
@@ -77,6 +78,29 @@ namespace DatingApp.Services.Implementations
 
         public async Task<bool> RegisterAsync(User user, string password)
         {
+            if (user is null)
+                return false;
+
+            var country = await _dbContext.Countries.FirstOrDefaultAsync(c => c.Code == user.Country.Code);
+            if (country is null)
+            {
+                _dbContext.Countries.Add(user.Country);
+            }
+            else
+            {
+                user.Country = country;
+            }
+
+            var city = await _dbContext.Cities.FirstOrDefaultAsync(c => c.Name == user.City.Name && c.CountryCode == user.City.CountryCode);
+            if (city is null)
+            {
+                _dbContext.Cities.Add(user.City);
+            }
+            else
+            {
+                user.City = city;
+            }
+
             var result = await _userManager.CreateAsync(user, password);
 
             if (result.Succeeded)

@@ -8,7 +8,9 @@ namespace DatingApp.Mapping
     {
         public LookupProfile()
         {
-            CreateMap<Sex, SexDto>();
+            CreateMap<Sex, SexDto>().ReverseMap();
+            CreateMap<CityDto, City>().ReverseMap();
+            CreateMap<CountryDto, Country>().ReverseMap();
         }
     }
 }

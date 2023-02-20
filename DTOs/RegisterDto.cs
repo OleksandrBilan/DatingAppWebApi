@@ -19,7 +19,11 @@ namespace DatingApp.DTOs
         public DateTime BirthDate { get; set; }
 
         [Required]
-        public int CityId { get; set; }
+        public CountryDto Country { get; set; }
+
+        [Required]
+        public CityDto City { get; set; }
+
 
         [Required]
         public int SexId { get; set; }
