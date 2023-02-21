@@ -50,7 +50,7 @@ namespace DatingApp.Controllers
                 { 
                     user = userDto,
                     accessToken = accessToken,
-                    expiresAt = expireDateTime.ToUniversalTime(),
+                    expiresAt = expireDateTime,
                 });
             }
             catch (Exception ex)
