@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using DatingApp.DB.Models.Locations;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DatingApp.DB.Models
+namespace DatingApp.DB.Models.UserRelated
 {
     public class User : IdentityUser
     {

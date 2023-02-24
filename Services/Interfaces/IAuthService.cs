@@ -1,5 +1,4 @@
-﻿
-using DatingApp.DB.Models;
+﻿using DatingApp.DB.Models.UserRelated;
 
 namespace DatingApp.Services.Interfaces
 {

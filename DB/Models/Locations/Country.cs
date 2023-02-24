@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DatingApp.DB.Models
+namespace DatingApp.DB.Models.Locations
 {
     public class Country
     {

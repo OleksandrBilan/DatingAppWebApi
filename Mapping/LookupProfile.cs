@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using DatingApp.DB.Models;
+using DatingApp.DB.Models.Locations;
+using DatingApp.DB.Models.UserRelated;
 using DatingApp.DTOs;
 
 namespace DatingApp.Mapping

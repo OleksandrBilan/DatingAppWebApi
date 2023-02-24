@@ -1,4 +1,6 @@
-﻿using DatingApp.DB.Models;
+﻿using DatingApp.DB.Models.Locations;
+using DatingApp.DB.Models.Questionnaire;
+using DatingApp.DB.Models.UserRelated;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,9 +10,14 @@ namespace DatingApp.DB
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
+        public DbSet<Sex> Sex { get; set; }
+
         public DbSet<Country> Countries { get; set; }
         public DbSet<City> Cities { get; set; }
-        public DbSet<Sex> Sex { get; set; }
+
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<Answer> Answers { get; set; }
+        public DbSet<UserQuestionAnswer> UsersQuestionsAnswers { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -34,6 +41,8 @@ namespace DatingApp.DB
                 .WithMany(x => x.UsersWithSuchSexPreferences)
                 .HasForeignKey(x => x.SexPreferencesId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
+
+            builder.Entity<UserQuestionAnswer>().HasKey(x => new { x.UserId, x.QuestionId });
         }
     }
 }

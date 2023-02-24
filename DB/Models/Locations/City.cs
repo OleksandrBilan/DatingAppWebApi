@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DatingApp.DB.Models
+namespace DatingApp.DB.Models.Locations
 {
     public class City : IEquatable<City>
     {

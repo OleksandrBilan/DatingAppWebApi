@@ -1,4 +1,4 @@
-﻿namespace DatingApp.DB.Models
+﻿namespace DatingApp.DB.Models.UserRelated
 {
     public class Sex
     {
