@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DatingApp.DTOs
+namespace DatingApp.DTOs.Lookup
 {
-    public class CityDto
+    public class CountryDto
     {
         [Required]
         public string Name { get; set; }
 
         [Required]
-        public string CountryCode { get; set; }
+        public string Code { get; set; }
     }
 }

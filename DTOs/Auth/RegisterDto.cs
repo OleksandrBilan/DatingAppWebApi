@@ -1,6 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using DatingApp.DTOs.Lookup;
+using System.ComponentModel.DataAnnotations;
 
-namespace DatingApp.DTOs
+namespace DatingApp.DTOs.Auth
 {
     public class RegisterDto
     {

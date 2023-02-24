@@ -1,4 +1,4 @@
-﻿namespace DatingApp.DTOs
+﻿namespace DatingApp.DTOs.Lookup
 {
     public class SexDto
     {

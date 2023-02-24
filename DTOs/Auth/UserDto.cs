@@ -1,4 +1,6 @@
-﻿namespace DatingApp.DTOs
+﻿using DatingApp.DTOs.Lookup;
+
+namespace DatingApp.DTOs.Auth
 {
     public class UserDto
     {

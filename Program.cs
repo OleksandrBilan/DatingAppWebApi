@@ -55,6 +55,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SMTP"));
 
 builder.Services.AddScoped<ILookupService, LookupService>();
+builder.Services.AddScoped<IQuestionnaireService, QuestionnaireService>();
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<EmailHelper>();
 

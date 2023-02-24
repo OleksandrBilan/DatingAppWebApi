@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using DatingApp.DB.Models.Locations;
 using DatingApp.DB.Models.UserRelated;
-using DatingApp.DTOs;
+using DatingApp.DTOs.Lookup;
 
 namespace DatingApp.Mapping
 {

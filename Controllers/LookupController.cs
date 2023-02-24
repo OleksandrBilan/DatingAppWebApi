@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DatingApp.DTOs;
+using DatingApp.DTOs.Lookup;
 using DatingApp.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 

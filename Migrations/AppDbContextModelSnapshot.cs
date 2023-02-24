@@ -40,7 +40,7 @@ namespace DatingApp.Migrations
 
                     b.HasIndex("CountryCode");
 
-                    b.ToTable("Cities");
+                    b.ToTable("Cities", (string)null);
                 });
 
             modelBuilder.Entity("DatingApp.DB.Models.Locations.Country", b =>
@@ -53,7 +53,7 @@ namespace DatingApp.Migrations
 
                     b.HasKey("Code");
 
-                    b.ToTable("Countries");
+                    b.ToTable("Countries", (string)null);
                 });
 
             modelBuilder.Entity("DatingApp.DB.Models.Questionnaire.Answer", b =>
@@ -74,7 +74,7 @@ namespace DatingApp.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("Answers");
+                    b.ToTable("Answers", (string)null);
                 });
 
             modelBuilder.Entity("DatingApp.DB.Models.Questionnaire.Question", b =>
@@ -90,7 +90,7 @@ namespace DatingApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Questions");
+                    b.ToTable("Questions", (string)null);
                 });
 
             modelBuilder.Entity("DatingApp.DB.Models.Questionnaire.UserQuestionAnswer", b =>
@@ -110,7 +110,7 @@ namespace DatingApp.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("UsersQuestionsAnswers");
+                    b.ToTable("UsersQuestionsAnswers", (string)null);
                 });
 
             modelBuilder.Entity("DatingApp.DB.Models.UserRelated.Sex", b =>
@@ -126,7 +126,7 @@ namespace DatingApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Sex");
+                    b.ToTable("Sex", (string)null);
 
                     b.HasData(
                         new

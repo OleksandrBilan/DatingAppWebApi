@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using DatingApp.DB.Models.UserRelated;
-using DatingApp.DTOs;
+using DatingApp.DTOs.Auth;
 
 namespace DatingApp.Mapping
 {
