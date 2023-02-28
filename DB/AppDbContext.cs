@@ -1,6 +1,7 @@
 ﻿using DatingApp.DB.Models.Locations;
 using DatingApp.DB.Models.Questionnaire;
 using DatingApp.DB.Models.UserRelated;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,6 +29,14 @@ namespace DatingApp.DB
                 new Sex { Id = 1, Name = "Not Mentioned"},
                 new Sex { Id = 2, Name = "Male"},
                 new Sex { Id = 3, Name = "Female"}
+            );
+
+            builder.Entity<Country>().HasData(
+                new Country { Code = "XX", Name = "Default Country"}
+            );
+
+            builder.Entity<City>().HasData(
+                new City { Id = 1, Name = "Default City", CountryCode = "XX" }
             );
 
             builder.Entity<User>()

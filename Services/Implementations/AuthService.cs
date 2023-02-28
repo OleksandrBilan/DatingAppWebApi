@@ -43,6 +43,46 @@ namespace DatingApp.Services.Implementations
             return false;
         }
 
+        private class Credentials
+        {
+            public string Email { get; set; }
+            public string Password { get; set; }
+        }
+
+        public async Task CreateAdminUsersIfDontExist()
+        {
+            var credentials = _configuration.GetSection("AdminUsers").Get<IEnumerable<Credentials>>();
+            if (credentials is not null)
+            {
+                foreach (var adminCredentials in credentials)
+                {
+                    var existingUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == adminCredentials.Email);
+                    if (existingUser is null)
+                    {
+                        var adminUser = new User
+                        {
+                            Email = adminCredentials.Email,
+                            UserName = adminCredentials.Email,
+                            BirthDate = DateTime.Now,
+                            CountryCode = "XX",
+                            CityId = 1,
+                            Description = "Administrator",
+                            Name = adminCredentials.Email,
+                            SexId = 1,
+                            SexPreferencesId = 1,
+                            EmailConfirmed = true
+                        };
+
+                        var result = await _userManager.CreateAsync(adminUser, adminCredentials.Password);
+                        if (result.Succeeded)
+                        {
+                            await _userManager.AddToRoleAsync(adminUser, "Admin");
+                        }
+                    }
+                }
+            }
+        }
+
         public async Task<string> GenerateAccessTokenAsync(User user, DateTime expireDateTime)
         {
             var securityKey = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("SecretKey"));
@@ -106,6 +146,8 @@ namespace DatingApp.Services.Implementations
 
             if (result.Succeeded)
             {
+                await _userManager.AddToRoleAsync(user, "User");
+
                 var confirmationLink = $"{_configuration.GetValue<string>("EmailConfirmationLink")}/{user.Id}";
 
                 await _emailHelper.SendMailAsync(

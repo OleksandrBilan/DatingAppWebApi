@@ -11,5 +11,7 @@ namespace DatingApp.Services.Interfaces
         Task<string> GenerateAccessTokenAsync(User user, DateTime expireDateTime);
 
         Task<bool> ConfirmEmailAsync(string userId);
+
+        Task CreateAdminUsersIfDontExist();
     }
 }
