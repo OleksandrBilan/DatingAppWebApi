@@ -2,7 +2,6 @@
 using DatingApp.DB.Models.UserRelated;
 using DatingApp.DTOs.Auth;
 using DatingApp.Services.Interfaces;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DatingApp.Controllers
@@ -13,25 +12,12 @@ namespace DatingApp.Controllers
         private readonly IAuthService _authService;
         private readonly IMapper _mapper;
 
-        private static void CreateUserRolesIfDontExist(RoleManager<IdentityRole> roleManager)
-        {
-            var userRoles = new string[2] { "Admin", "User" };
-            foreach (var role in userRoles)
-            {
-                var roleExists = roleManager.RoleExistsAsync(role).Result;
-                if (!roleExists)
-                {
-                    roleManager.CreateAsync(new IdentityRole(role)).Wait();
-                }
-            }
-        }
-
-        public AuthController(IAuthService authService, IMapper mapper, RoleManager<IdentityRole> roleManager)
+        public AuthController(IAuthService authService, IMapper mapper)
         {
             _authService = authService;
             _mapper = mapper;
 
-            CreateUserRolesIfDontExist(roleManager);
+            authService.CreateUserRolesIfDontExist().Wait();
             authService.CreateAdminUsersIfDontExist().Wait();
         }
 

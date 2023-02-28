@@ -14,33 +14,35 @@ namespace DatingApp.Services.Implementations
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
         private readonly AppDbContext _dbContext;
         private readonly EmailHelper _emailHelper;
 
-        public AuthService(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration, AppDbContext dbContext, EmailHelper emailHelper)
+        public AuthService(UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole> roleManager, 
+                           IConfiguration configuration, AppDbContext dbContext, EmailHelper emailHelper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
             _configuration = configuration;
             _dbContext = dbContext;
             _emailHelper = emailHelper;
         }
 
-        public async Task<bool> ConfirmEmailAsync(string userId)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user is not null)
-            {
-                if (user.EmailConfirmed)
-                    return true;
+        #region Roles and admin users creation
 
-                var confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var result = await _userManager.ConfirmEmailAsync(user, confirmationToken);
-                if (result.Succeeded)
-                    return true;
+        public async Task CreateUserRolesIfDontExist()
+        {
+            var userRoles = new string[2] { "Admin", "User" };
+            foreach (var role in userRoles)
+            {
+                var roleExists = await _roleManager.RoleExistsAsync(role);
+                if (!roleExists)
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(role));
+                }
             }
-            return false;
         }
 
         private class Credentials
@@ -81,6 +83,24 @@ namespace DatingApp.Services.Implementations
                     }
                 }
             }
+        }
+
+        #endregion
+
+        public async Task<bool> ConfirmEmailAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user is not null)
+            {
+                if (user.EmailConfirmed)
+                    return true;
+
+                var confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var result = await _userManager.ConfirmEmailAsync(user, confirmationToken);
+                if (result.Succeeded)
+                    return true;
+            }
+            return false;
         }
 
         public async Task<string> GenerateAccessTokenAsync(User user, DateTime expireDateTime)
