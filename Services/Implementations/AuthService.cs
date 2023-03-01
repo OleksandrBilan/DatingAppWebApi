@@ -112,10 +112,10 @@ namespace DatingApp.Services.Implementations
             {
                 new Claim(ClaimTypes.Email, user.Email)
             };
-            var roles = await GetUserRolesAsync(user);
+            var roles = await _userManager.GetRolesAsync(user);
             foreach (var role in roles)
             {
-                claims.Add(new Claim(ClaimTypes.Role, role.Name));
+                claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
             var token = new JwtSecurityToken(claims: claims,
@@ -190,15 +190,9 @@ namespace DatingApp.Services.Implementations
             return result.Succeeded;
         }
 
-        public async Task<IEnumerable<IdentityRole>> GetUserRolesAsync(User user)
+        public async Task<IEnumerable<string>> GetUserRolesAsync(User user)
         {
-            var roleNames = await _userManager.GetRolesAsync(user);
-            var roles = new List<IdentityRole>();
-            foreach (var role in roleNames)
-            {
-                roles.Add(new IdentityRole(role));
-            }
-            return roles;
+            return await _userManager.GetRolesAsync(user);
         }
     }
 }

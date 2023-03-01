@@ -1,5 +1,4 @@
 ﻿using DatingApp.DB.Models.UserRelated;
-using Microsoft.AspNetCore.Identity;
 
 namespace DatingApp.Services.Interfaces
 {
@@ -17,6 +16,6 @@ namespace DatingApp.Services.Interfaces
 
         Task<bool> ConfirmEmailAsync(string userId);
 
-        Task<IEnumerable<IdentityRole>> GetUserRolesAsync(User user);
+        Task<IEnumerable<string>> GetUserRolesAsync(User user);
     }
 }

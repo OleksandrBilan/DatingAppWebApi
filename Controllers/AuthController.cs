@@ -47,7 +47,9 @@ namespace DatingApp.Controllers
                 var user = await _authService.LoginAsync(request.Email, request.Password);
                 var expireDateTime = DateTime.Now.AddMinutes(30);
                 var accessToken = await _authService.GenerateAccessTokenAsync(user, expireDateTime);
+
                 var userDto = _mapper.Map<UserDto>(user);
+                userDto.Roles = await _authService.GetUserRolesAsync(user);
 
                 return Ok(new 
                 { 

@@ -4,6 +4,8 @@ namespace DatingApp.DTOs.Auth
 {
     public class UserDto
     {
+        public string Id { get; set; }
+
         public string Name { get; set; }
 
         public DateTime BirthDate { get; set; }
@@ -17,5 +19,7 @@ namespace DatingApp.DTOs.Auth
         public CountryDto Country { get; set; }
 
         public CityDto City { get; set; }
+
+        public IEnumerable<string> Roles { get; set; }
     }
 }
