@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using DatingApp.DTOs.Questionnaire;
 using DatingApp.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DatingApp.Controllers
 {
     [Route("questionnaire")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
     public class QuestionnaireController : Controller
     {
         private readonly IQuestionnaireService _questionnaireService;

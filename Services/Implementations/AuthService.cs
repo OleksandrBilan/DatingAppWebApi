@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
 namespace DatingApp.Services.Implementations
@@ -32,7 +33,7 @@ namespace DatingApp.Services.Implementations
 
         #region Roles and admin users creation
 
-        public async Task CreateUserRolesIfDontExist()
+        public async Task CreateUserRolesIfDontExistAsync()
         {
             var userRoles = new string[2] { "Admin", "User" };
             foreach (var role in userRoles)
@@ -51,7 +52,7 @@ namespace DatingApp.Services.Implementations
             public string Password { get; set; }
         }
 
-        public async Task CreateAdminUsersIfDontExist()
+        public async Task CreateAdminUsersIfDontExistAsync()
         {
             var credentials = _configuration.GetSection("AdminUsers").Get<IEnumerable<Credentials>>();
             if (credentials is not null)
@@ -106,7 +107,16 @@ namespace DatingApp.Services.Implementations
         public async Task<string> GenerateAccessTokenAsync(User user, DateTime expireDateTime)
         {
             var securityKey = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("SecretKey"));
-            var claims = await _userManager.GetClaimsAsync(user);
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Email, user.Email)
+            };
+            var roles = await GetUserRolesAsync(user);
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role.Name));
+            }
 
             var token = new JwtSecurityToken(claims: claims,
                                              notBefore: DateTime.Now,
@@ -126,6 +136,7 @@ namespace DatingApp.Services.Implementations
                 var user = await _userManager.FindByEmailAsync(email);
                 user.Country = await _dbContext.Countries.FirstOrDefaultAsync(c => c.Code == user.CountryCode);
                 user.City = await _dbContext.Cities.FirstOrDefaultAsync(c => c.Id == user.CityId);
+
                 return user;
             }
             else
@@ -177,6 +188,17 @@ namespace DatingApp.Services.Implementations
             }
             
             return result.Succeeded;
+        }
+
+        public async Task<IEnumerable<IdentityRole>> GetUserRolesAsync(User user)
+        {
+            var roleNames = await _userManager.GetRolesAsync(user);
+            var roles = new List<IdentityRole>();
+            foreach (var role in roleNames)
+            {
+                roles.Add(new IdentityRole(role));
+            }
+            return roles;
         }
     }
 }

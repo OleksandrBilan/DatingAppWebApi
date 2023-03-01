@@ -17,8 +17,8 @@ namespace DatingApp.Controllers
             _authService = authService;
             _mapper = mapper;
 
-            authService.CreateUserRolesIfDontExist().Wait();
-            authService.CreateAdminUsersIfDontExist().Wait();
+            authService.CreateUserRolesIfDontExistAsync().Wait();
+            authService.CreateAdminUsersIfDontExistAsync().Wait();
         }
 
         [HttpPost("register")]
@@ -45,9 +45,9 @@ namespace DatingApp.Controllers
             try
             {
                 var user = await _authService.LoginAsync(request.Email, request.Password);
-                var userDto = _mapper.Map<UserDto>(user);
                 var expireDateTime = DateTime.Now.AddMinutes(30);
                 var accessToken = await _authService.GenerateAccessTokenAsync(user, expireDateTime);
+                var userDto = _mapper.Map<UserDto>(user);
 
                 return Ok(new 
                 { 

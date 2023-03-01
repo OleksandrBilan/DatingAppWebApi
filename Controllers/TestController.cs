@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DatingApp.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("test")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public class TestController : Controller
     {
         [HttpGet("test")]

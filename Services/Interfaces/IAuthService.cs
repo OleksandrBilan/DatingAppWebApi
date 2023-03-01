@@ -1,12 +1,13 @@
 ﻿using DatingApp.DB.Models.UserRelated;
+using Microsoft.AspNetCore.Identity;
 
 namespace DatingApp.Services.Interfaces
 {
     public interface IAuthService
     {
-        Task CreateAdminUsersIfDontExist();
+        Task CreateAdminUsersIfDontExistAsync();
 
-        Task CreateUserRolesIfDontExist();
+        Task CreateUserRolesIfDontExistAsync();
 
         Task<bool> RegisterAsync(User user, string password);
 
@@ -15,5 +16,7 @@ namespace DatingApp.Services.Interfaces
         Task<string> GenerateAccessTokenAsync(User user, DateTime expireDateTime);
 
         Task<bool> ConfirmEmailAsync(string userId);
+
+        Task<IEnumerable<IdentityRole>> GetUserRolesAsync(User user);
     }
 }
