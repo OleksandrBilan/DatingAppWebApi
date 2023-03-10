@@ -6,6 +6,6 @@
 
         public string Name { get; set; }
 
-        public IEnumerable<string> Answers { get; set; }
+        public IEnumerable<IdValueDto> Answers { get; set; }
     }
 }

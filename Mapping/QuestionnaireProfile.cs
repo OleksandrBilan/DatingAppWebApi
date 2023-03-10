@@ -8,7 +8,8 @@ namespace DatingApp.Mapping
     {
         public QuestionnaireProfile()
         {
-            CreateMap<Answer, string>().ConstructUsing(a => a.Name);
+            CreateMap<Answer, IdValueDto>()
+                .ForMember(dest => dest.Value, opt => opt.MapFrom(src => src.Name));
             CreateMap<Question, QuestionDto>();
         }
     }

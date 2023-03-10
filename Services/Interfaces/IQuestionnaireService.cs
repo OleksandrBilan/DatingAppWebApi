@@ -10,6 +10,12 @@ namespace DatingApp.Services.Interfaces
 
         Task DeleteQuestionAsync(int questionId);
 
-        Task ChangeQuestionAsync(int questionId, string newQuestion, IEnumerable<string> newAnswers);
+        Task ChangeQuestionAsync(int questionId, string newQuestion);
+
+        Task AddAnswerAsync(int questionId, string newAnswer);
+
+        Task DeleteAnswerAsync(int answerId);
+
+        Task ChangeAnswerAsync(int answerId, string newAnswer);
     }
 }

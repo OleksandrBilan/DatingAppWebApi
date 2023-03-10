@@ -19,21 +19,27 @@ namespace DatingApp.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost("addQuestion")]
-        public async Task<IActionResult> AddQuestionAsync([FromBody] AddQuestionDto request)
+        private async Task<IActionResult> ProcessRequestAsync(Func<Task> func)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             try
             {
-                await _questionnaireService.AddQuestionAsync(request.Question, request.Answers);
+                await func();
                 return Ok();
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpPost("addQuestion")]
+        public async Task<IActionResult> AddQuestionAsync([FromBody] AddQuestionDto request)
+        {
+            return await ProcessRequestAsync(async () => 
+                await _questionnaireService.AddQuestionAsync(request.Question, request.Answers));
         }
 
         [HttpGet("getQuestionnaire")]
@@ -45,19 +51,37 @@ namespace DatingApp.Controllers
         }
 
         [HttpPut("changeQuestion")]
-        public async Task<IActionResult> ChangeQuestionAsync([FromBody] ChangeQuestionDto request)
+        public async Task<IActionResult> ChangeQuestionAsync([FromBody] IdValueDto request)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            await _questionnaireService.ChangeQuestionAsync(request.QuestionId, request.Question, request.Answers);
-            return Ok();
+            return await ProcessRequestAsync(async () =>
+                await _questionnaireService.ChangeQuestionAsync(request.Id, request.Value));
         }
 
         [HttpDelete("deleteQuestion")]
         public async Task<IActionResult> DeleteQuestionAsync(int questionId)
         {
             await _questionnaireService.DeleteQuestionAsync(questionId);
+            return Ok();
+        }
+
+        [HttpPost("addAnswer")]
+        public async Task<IActionResult> AddAnswerAsync([FromBody] IdValueDto request)
+        {
+            return await ProcessRequestAsync(async () =>
+                await _questionnaireService.AddAnswerAsync(request.Id, request.Value));
+        }
+
+        [HttpPut("changeAnswer")]
+        public async Task<IActionResult> ChangeAnswerAsync([FromBody] IdValueDto request)
+        {
+            return await ProcessRequestAsync(async () =>
+                await _questionnaireService.ChangeAnswerAsync(request.Id, request.Value));
+        }
+
+        [HttpDelete("deleteAnswer")]
+        public async Task<IActionResult> DeleteAnswerAsync(int answerId)
+        {
+            await _questionnaireService.DeleteAnswerAsync(answerId);
             return Ok();
         }
     }

@@ -29,12 +29,12 @@ namespace DatingApp.Services.Implementations
         public async Task<Question> AddQuestionAsync(string question, IEnumerable<string> answers)
         {
             if (string.IsNullOrWhiteSpace(question)) 
-                throw new ArgumentNullException(nameof(question));
+                throw new ArgumentException("Question is not valid", nameof(question));
 
             foreach (var answer in answers)
             {
                 if (string.IsNullOrWhiteSpace(answer))
-                    throw new ArgumentNullException(nameof(answers));
+                    throw new ArgumentException("One of the answers is not valid", nameof(answers));
             }
 
             var existingQuestion = await _dbContext.Questions.FirstOrDefaultAsync(q => q.Name == question);
@@ -63,22 +63,54 @@ namespace DatingApp.Services.Implementations
             }
         }
 
-        public async Task ChangeQuestionAsync(int questionId, string newQuestion, IEnumerable<string> newAnswers)
+        public async Task ChangeQuestionAsync(int questionId, string newQuestion)
         {
             var question = await _dbContext.Questions.FirstOrDefaultAsync(q => q.Id == questionId);
             if (question is null)
                 throw new ArgumentException($"Question with id {questionId} does not exist");
 
-            question.Name = newQuestion;
-            await RemoveQuestionAnswersAsync(questionId);
-            await AddAnswersRangeAsync(questionId, newAnswers);
+            if (question.Name != newQuestion)
+            {
+                question.Name = newQuestion;
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
+        public async Task<IEnumerable<Question>> GetQuestionnaireAsync() => await _dbContext.Questions.Include(q => q.Answers).ToListAsync();
+
+        public async Task AddAnswerAsync(int questionId, string newAnswer)
+        {
+            var question = await _dbContext.Questions.FirstOrDefaultAsync(q => q.Id == questionId);
+            if (question is null)
+                throw new ArgumentException($"Question with id {questionId} does not exist");
+
+            question.Answers = await _dbContext.Answers.Where(a => a.QuestionId == questionId).ToListAsync();
+            var answer = new Answer() { QuestionId = questionId, Name = newAnswer };
+            question.Answers.Add(answer);
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Question>> GetQuestionnaireAsync()
+        public async Task DeleteAnswerAsync(int answerId)
         {
-            var questions = await _dbContext.Questions.Include(q => q.Answers).ToListAsync();
-            return questions;
+            var answer = await _dbContext.Answers.FirstOrDefaultAsync(a => a.Id == answerId);
+            if (answer is not null)
+            {
+                _dbContext.Answers.Remove(answer);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
+        public async Task ChangeAnswerAsync(int answerId, string newAnswer)
+        {
+            if (string.IsNullOrWhiteSpace(newAnswer))
+                throw new ArgumentException("Answer is not valid", nameof(newAnswer));
+
+            var answer = await _dbContext.Answers.FirstOrDefaultAsync(a => a.Id == answerId);
+            if (answer is null)
+                throw new ArgumentException("No answer with such id", nameof(answerId));
+
+            answer.Name = newAnswer;
+            await _dbContext.SaveChangesAsync();
         }
     }
 }
