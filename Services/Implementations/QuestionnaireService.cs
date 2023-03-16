@@ -37,19 +37,14 @@ namespace DatingApp.Services.Implementations
                     throw new ArgumentException("One of the answers is not valid", nameof(answers));
             }
 
-            var existingQuestion = await _dbContext.Questions.FirstOrDefaultAsync(q => q.Name == question);
-            if (existingQuestion is null)
-            {
-                var newQuestion = new Question { Name = question };
-                _dbContext.Questions.Add(newQuestion);
-                await _dbContext.SaveChangesAsync();
+            var newQuestion = new Question { Name = question };
+            _dbContext.Questions.Add(newQuestion);
+            await _dbContext.SaveChangesAsync();
 
-                await AddAnswersRangeAsync(newQuestion.Id, answers);
-                await _dbContext.SaveChangesAsync();
+            await AddAnswersRangeAsync(newQuestion.Id, answers);
+            await _dbContext.SaveChangesAsync();
 
-                return newQuestion;
-            }
-            return existingQuestion;
+            return newQuestion;
         }
 
         public async Task DeleteQuestionAsync(int questionId)
@@ -109,8 +104,11 @@ namespace DatingApp.Services.Implementations
             if (answer is null)
                 throw new ArgumentException("No answer with such id", nameof(answerId));
 
-            answer.Name = newAnswer;
-            await _dbContext.SaveChangesAsync();
+            if (answer.Name != newAnswer)
+            {
+                answer.Name = newAnswer;
+                await _dbContext.SaveChangesAsync();
+            }
         }
     }
 }
