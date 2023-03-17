@@ -2,7 +2,7 @@
 
 namespace DatingApp.DTOs.Auth
 {
-    public class LoginDto
+    public class CredentialsDto
     {
         [Required]
         public string Email { get; set; }

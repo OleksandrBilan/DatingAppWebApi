@@ -10,6 +10,7 @@ namespace DatingApp.Mapping
         {
             CreateMap<Answer, IdValueDto>()
                 .ForMember(dest => dest.Value, opt => opt.MapFrom(src => src.Name));
+
             CreateMap<Question, QuestionDto>();
         }
     }

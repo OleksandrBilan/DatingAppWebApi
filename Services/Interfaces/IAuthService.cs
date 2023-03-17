@@ -1,4 +1,5 @@
 ﻿using DatingApp.DB.Models.UserRelated;
+using DatingApp.DTOs.Questionnaire;
 
 namespace DatingApp.Services.Interfaces
 {
@@ -8,7 +9,7 @@ namespace DatingApp.Services.Interfaces
 
         Task CreateUserRolesIfDontExistAsync();
 
-        Task<bool> RegisterAsync(User user, string password);
+        Task<bool> RegisterAsync(User user, string password, IEnumerable<QuestionAnswerDto> questionsAnswers);
 
         Task<User> LoginAsync(string email, string password);
 
@@ -17,5 +18,7 @@ namespace DatingApp.Services.Interfaces
         Task<bool> ConfirmEmailAsync(string userId);
 
         Task<IEnumerable<string>> GetUserRolesAsync(User user);
+
+        Task<bool> CheckIfUserExistsAsync(string email);
     }
 }

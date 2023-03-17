@@ -1,4 +1,5 @@
 ﻿using DatingApp.DTOs.Lookup;
+using DatingApp.DTOs.Questionnaire;
 using System.ComponentModel.DataAnnotations;
 
 namespace DatingApp.DTOs.Auth
@@ -34,5 +35,8 @@ namespace DatingApp.DTOs.Auth
 
         [Required]
         public string Description { get; set; }
+
+        [Required]
+        public IEnumerable<QuestionAnswerDto> QuestionnaireAnswers { get; set; }
     }
 }

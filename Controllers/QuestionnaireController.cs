@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace DatingApp.Controllers
 {
     [Route("questionnaire")]
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
     public class QuestionnaireController : Controller
     {
         private readonly IQuestionnaireService _questionnaireService;
@@ -35,13 +34,6 @@ namespace DatingApp.Controllers
             }
         }
 
-        [HttpPost("addQuestion")]
-        public async Task<IActionResult> AddQuestionAsync([FromBody] AddQuestionDto request)
-        {
-            return await ProcessRequestAsync(async () => 
-                await _questionnaireService.AddQuestionAsync(request.Question, request.Answers));
-        }
-
         [HttpGet("getQuestionnaire")]
         public async Task<IActionResult> GetQuestionnaireAsync()
         {
@@ -50,7 +42,16 @@ namespace DatingApp.Controllers
             return Ok(result);
         }
 
+        [HttpPost("addQuestion")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        public async Task<IActionResult> AddQuestionAsync([FromBody] AddQuestionDto request)
+        {
+            return await ProcessRequestAsync(async () => 
+                await _questionnaireService.AddQuestionAsync(request.Question, request.Answers));
+        }
+
         [HttpPut("changeQuestion")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> ChangeQuestionAsync([FromBody] IdValueDto request)
         {
             return await ProcessRequestAsync(async () =>
@@ -58,6 +59,7 @@ namespace DatingApp.Controllers
         }
 
         [HttpDelete("deleteQuestion")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> DeleteQuestionAsync(int questionId)
         {
             await _questionnaireService.DeleteQuestionAsync(questionId);
@@ -65,6 +67,7 @@ namespace DatingApp.Controllers
         }
 
         [HttpPost("addAnswer")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> AddAnswerAsync([FromBody] IdValueDto request)
         {
             return await ProcessRequestAsync(async () =>
@@ -72,6 +75,7 @@ namespace DatingApp.Controllers
         }
 
         [HttpPut("changeAnswer")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> ChangeAnswerAsync([FromBody] IdValueDto request)
         {
             return await ProcessRequestAsync(async () =>
@@ -79,6 +83,7 @@ namespace DatingApp.Controllers
         }
 
         [HttpDelete("deleteAnswer")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> DeleteAnswerAsync(int answerId)
         {
             await _questionnaireService.DeleteAnswerAsync(answerId);

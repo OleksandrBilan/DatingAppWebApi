@@ -53,6 +53,10 @@ namespace DatingApp.Services.Implementations
             if (question is not null)
             {
                 await RemoveQuestionAnswersAsync(questionId);
+
+                var records = await _dbContext.UsersQuestionsAnswers.Where(x => x.QuestionId == questionId).ToArrayAsync();
+                _dbContext.UsersQuestionsAnswers.RemoveRange(records);
+
                 _dbContext.Questions.Remove(question);
                 await _dbContext.SaveChangesAsync();
             }
@@ -90,6 +94,9 @@ namespace DatingApp.Services.Implementations
             var answer = await _dbContext.Answers.FirstOrDefaultAsync(a => a.Id == answerId);
             if (answer is not null)
             {
+                var records = await _dbContext.UsersQuestionsAnswers.Where(x => x.AnswerId == answerId).ToArrayAsync();
+                _dbContext.UsersQuestionsAnswers.RemoveRange(records);
+
                 _dbContext.Answers.Remove(answer);
                 await _dbContext.SaveChangesAsync();
             }

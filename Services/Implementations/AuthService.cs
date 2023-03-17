@@ -1,5 +1,7 @@
 ﻿using DatingApp.DB;
+using DatingApp.DB.Models.Questionnaire;
 using DatingApp.DB.Models.UserRelated;
+using DatingApp.DTOs.Questionnaire;
 using DatingApp.Services.Helpers;
 using DatingApp.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -148,35 +150,33 @@ namespace DatingApp.Services.Implementations
             }
         }
 
-        public async Task<bool> RegisterAsync(User user, string password)
+        public async Task<bool> RegisterAsync(User user, string password, IEnumerable<QuestionAnswerDto> questionsAnswers)
         {
             if (user is null)
                 return false;
 
             var country = await _dbContext.Countries.FirstOrDefaultAsync(c => c.Code == user.Country.Code);
             if (country is null)
-            {
                 _dbContext.Countries.Add(user.Country);
-            }
             else
-            {
                 user.Country = country;
-            }
 
             var city = await _dbContext.Cities.FirstOrDefaultAsync(c => c.Name == user.City.Name && c.CountryCode == user.City.CountryCode);
             if (city is null)
-            {
                 _dbContext.Cities.Add(user.City);
-            }
             else
-            {
                 user.City = city;
-            }
 
             var result = await _userManager.CreateAsync(user, password);
 
             if (result.Succeeded)
             {
+                if (questionsAnswers is not null)
+                {
+                    var userQuestionsAnswers = questionsAnswers.Select(x => new UserQuestionAnswer { UserId = user.Id, QuestionId = x.QuestionId, AnswerId = x.AnswerId });
+                    await _dbContext.UsersQuestionsAnswers.AddRangeAsync(userQuestionsAnswers);
+                }
+
                 await _userManager.AddToRoleAsync(user, "User");
 
                 var confirmationLink = $"{_configuration.GetValue<string>("EmailConfirmationLink")}/{user.Id}";
@@ -186,13 +186,20 @@ namespace DatingApp.Services.Implementations
                     "Email Confirmation",
                     $"Please click on the link to confirm your email:\n {confirmationLink}");
             }
-            
+
+            await _dbContext.SaveChangesAsync();
             return result.Succeeded;
         }
 
         public async Task<IEnumerable<string>> GetUserRolesAsync(User user)
         {
             return await _userManager.GetRolesAsync(user);
+        }
+
+        public async Task<bool> CheckIfUserExistsAsync(string email)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+            return user is not null;
         }
     }
 }

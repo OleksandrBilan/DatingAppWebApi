@@ -21,6 +21,13 @@ namespace DatingApp.Controllers
             authService.CreateAdminUsersIfDontExistAsync().Wait();
         }
 
+        [HttpGet("checkIfUserExists")]
+        public async Task<IActionResult> CheckIfUserExistsAsync(string email)
+        {
+            var result = await _authService.CheckIfUserExistsAsync(email);
+            return Ok(result);
+        }
+
         [HttpPost("register")]
         public async Task<IActionResult> RegisterAsync([FromBody] RegisterDto request)
         {
@@ -28,7 +35,7 @@ namespace DatingApp.Controllers
                 return BadRequest(ModelState);
 
             var user = _mapper.Map<User>(request);
-            bool succeeded = await _authService.RegisterAsync(user, request.Password);
+            bool succeeded = await _authService.RegisterAsync(user, request.Password, request.QuestionnaireAnswers);
 
             if (succeeded)
                 return Ok();
@@ -37,7 +44,7 @@ namespace DatingApp.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> LoginAsync([FromBody] LoginDto request)
+        public async Task<IActionResult> LoginAsync([FromBody] CredentialsDto request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

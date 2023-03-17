@@ -9,6 +9,7 @@ namespace DatingApp.Mapping
         public UserProfile()
         {
             CreateMap<User, UserDto>();
+
             CreateMap<RegisterDto, User>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email));
         }
