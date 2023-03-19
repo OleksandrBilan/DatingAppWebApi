@@ -1,5 +1,6 @@
 ﻿using DatingApp.DB;
 using DatingApp.DB.Models.Questionnaire;
+using DatingApp.DTOs.Questionnaire;
 using DatingApp.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +18,7 @@ namespace DatingApp.Services.Implementations
 
         private async Task RemoveQuestionAnswersAsync(int questionId)
         {
-            var answers = await _dbContext.Answers.Where(a => a.QuestionId == questionId).ToArrayAsync();
+            var answers = await _dbContext.Answers.Where(a => a.QuestionId == questionId).ToListAsync();
             _dbContext.Answers.RemoveRange(answers);
         }
 
@@ -54,7 +55,7 @@ namespace DatingApp.Services.Implementations
             {
                 await RemoveQuestionAnswersAsync(questionId);
 
-                var records = await _dbContext.UsersQuestionsAnswers.Where(x => x.QuestionId == questionId).ToArrayAsync();
+                var records = await _dbContext.UsersQuestionsAnswers.Where(x => x.QuestionId == questionId).ToListAsync();
                 _dbContext.UsersQuestionsAnswers.RemoveRange(records);
 
                 _dbContext.Questions.Remove(question);
@@ -94,7 +95,7 @@ namespace DatingApp.Services.Implementations
             var answer = await _dbContext.Answers.FirstOrDefaultAsync(a => a.Id == answerId);
             if (answer is not null)
             {
-                var records = await _dbContext.UsersQuestionsAnswers.Where(x => x.AnswerId == answerId).ToArrayAsync();
+                var records = await _dbContext.UsersQuestionsAnswers.Where(x => x.AnswerId == answerId).ToListAsync();
                 _dbContext.UsersQuestionsAnswers.RemoveRange(records);
 
                 _dbContext.Answers.Remove(answer);
@@ -116,6 +117,34 @@ namespace DatingApp.Services.Implementations
                 answer.Name = newAnswer;
                 await _dbContext.SaveChangesAsync();
             }
+        }
+
+        public async Task<IEnumerable<UserQuestionAnswer>> GetUserAnswersAsync(string userId)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                return Array.Empty<UserQuestionAnswer>();
+
+            return await _dbContext.UsersQuestionsAnswers.Where(x => x.UserId == userId).ToListAsync();
+        }
+
+        public async Task UpdateUserAnswersAsync(string userId, IEnumerable<QuestionAnswerDto> answers)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                throw new ArgumentException("userId is not valid", nameof(userId));
+
+            var existingAnswers = await _dbContext.UsersQuestionsAnswers.Where(x => x.UserId == userId).ToListAsync();
+            if (existingAnswers is not null && existingAnswers.Any())
+            {
+                _dbContext.UsersQuestionsAnswers.RemoveRange(existingAnswers);
+            }
+
+            if (answers is not null && answers.Any())
+            {
+                var userQuestionsAnswers = answers.Select(x => new UserQuestionAnswer { UserId = userId, QuestionId = x.QuestionId, AnswerId = x.AnswerId });
+                await _dbContext.UsersQuestionsAnswers.AddRangeAsync(userQuestionsAnswers);
+            }
+
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

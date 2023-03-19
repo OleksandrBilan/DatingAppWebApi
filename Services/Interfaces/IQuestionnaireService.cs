@@ -1,4 +1,5 @@
 ﻿using DatingApp.DB.Models.Questionnaire;
+using DatingApp.DTOs.Questionnaire;
 
 namespace DatingApp.Services.Interfaces
 {
@@ -17,5 +18,9 @@ namespace DatingApp.Services.Interfaces
         Task DeleteAnswerAsync(int answerId);
 
         Task ChangeAnswerAsync(int answerId, string newAnswer);
+
+        Task<IEnumerable<UserQuestionAnswer>> GetUserAnswersAsync(string userId);
+
+        Task UpdateUserAnswersAsync(string userId, IEnumerable<QuestionAnswerDto> answers);
     }
 }

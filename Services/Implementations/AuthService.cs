@@ -171,7 +171,7 @@ namespace DatingApp.Services.Implementations
 
             if (result.Succeeded)
             {
-                if (questionsAnswers is not null)
+                if (questionsAnswers is not null && questionsAnswers.Any())
                 {
                     var userQuestionsAnswers = questionsAnswers.Select(x => new UserQuestionAnswer { UserId = user.Id, QuestionId = x.QuestionId, AnswerId = x.AnswerId });
                     await _dbContext.UsersQuestionsAnswers.AddRangeAsync(userQuestionsAnswers);

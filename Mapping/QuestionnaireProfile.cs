@@ -12,6 +12,8 @@ namespace DatingApp.Mapping
                 .ForMember(dest => dest.Value, opt => opt.MapFrom(src => src.Name));
 
             CreateMap<Question, QuestionDto>();
+
+            CreateMap<UserQuestionAnswer, QuestionAnswerDto>();
         }
     }
 }

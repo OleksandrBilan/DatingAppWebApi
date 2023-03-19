@@ -89,5 +89,22 @@ namespace DatingApp.Controllers
             await _questionnaireService.DeleteAnswerAsync(answerId);
             return Ok();
         }
+
+        [HttpGet("getUserAnswers")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
+        public async Task<IActionResult> GetUserAnswersAsync(string userId)
+        {
+            var userQuestionAnswers = await _questionnaireService.GetUserAnswersAsync(userId);
+            var result = _mapper.Map<List<QuestionAnswerDto>>(userQuestionAnswers);
+            return Ok(result);
+        }
+
+        [HttpPost("updateUserAnswers")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
+        public async Task<IActionResult> UpdateUserAnswersAsync([FromBody] UpdateUserAnswersDto request)
+        {
+            return await ProcessRequestAsync(async () =>
+                await _questionnaireService.UpdateUserAnswersAsync(request.UserId, request.Answers));
+        }
     }
 }

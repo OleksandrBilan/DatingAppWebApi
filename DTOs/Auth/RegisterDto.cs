@@ -36,7 +36,6 @@ namespace DatingApp.DTOs.Auth
         [Required]
         public string Description { get; set; }
 
-        [Required]
         public IEnumerable<QuestionAnswerDto> QuestionnaireAnswers { get; set; }
     }
 }
