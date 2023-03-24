@@ -45,12 +45,6 @@ namespace DatingApp.DB
                 .HasForeignKey(x => x.SexId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
-            builder.Entity<User>()
-                .HasOne(x => x.SexPreferences)
-                .WithMany(x => x.UsersWithSuchSexPreferences)
-                .HasForeignKey(x => x.SexPreferencesId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
             builder.Entity<Answer>()
                 .HasOne(a => a.Question)
                 .WithMany(q => q.Answers)

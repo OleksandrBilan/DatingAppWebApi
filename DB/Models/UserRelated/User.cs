@@ -21,8 +21,5 @@ namespace DatingApp.DB.Models.UserRelated
 
         public int SexId { get; set; }
         public Sex Sex { get; set; }
-
-        public int SexPreferencesId { get; set; }
-        public Sex SexPreferences { get; set; }
     }
 }

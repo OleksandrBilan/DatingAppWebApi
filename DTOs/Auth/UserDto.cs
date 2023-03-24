@@ -12,8 +12,6 @@ namespace DatingApp.DTOs.Auth
 
         public int SexId { get; set; }
 
-        public int SexPreferencesId { get; set; }
-
         public string Description { get; set; }
 
         public CountryDto Country { get; set; }

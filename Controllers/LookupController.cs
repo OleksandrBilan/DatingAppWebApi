@@ -24,5 +24,21 @@ namespace DatingApp.Controllers
             var result = _mapper.Map<IEnumerable<SexDto>>(sex);
             return Ok(result);
         }
+
+        [HttpGet("getCountries")]
+        public async Task<IActionResult> GetCountriesAsync()
+        {
+            var countries = await _lookupService.GetCountriesAsync();
+            var result = _mapper.Map<IEnumerable<CountryDto>>(countries);
+            return Ok(result);
+        }
+
+        [HttpGet("getCities")]
+        public async Task<IActionResult> GetCitiesAsync()
+        {
+            var cities = await _lookupService.GetCitiesAsync();
+            var result = _mapper.Map<IEnumerable<CityDto>>(cities);
+            return Ok(result);
+        }
     }
 }

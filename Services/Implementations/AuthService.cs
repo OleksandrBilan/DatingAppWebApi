@@ -74,7 +74,6 @@ namespace DatingApp.Services.Implementations
                             Description = "Administrator",
                             Name = adminCredentials.Email,
                             SexId = 1,
-                            SexPreferencesId = 1,
                             EmailConfirmed = true
                         };
 

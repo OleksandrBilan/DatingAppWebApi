@@ -7,7 +7,5 @@
         public string Name { get; set; }
 
         public ICollection<User> UsersWithSuchSex { get; set; }
-
-        public ICollection<User> UsersWithSuchSexPreferences { get; set; }
     }
 }

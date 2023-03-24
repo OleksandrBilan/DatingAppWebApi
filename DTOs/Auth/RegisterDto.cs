@@ -26,12 +26,8 @@ namespace DatingApp.DTOs.Auth
         [Required]
         public CityDto City { get; set; }
 
-
         [Required]
         public int SexId { get; set; }
-
-        [Required]
-        public int SexPreferencesId { get; set; }
 
         [Required]
         public string Description { get; set; }

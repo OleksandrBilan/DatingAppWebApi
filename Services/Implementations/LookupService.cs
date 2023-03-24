@@ -1,4 +1,5 @@
 ﻿using DatingApp.DB;
+using DatingApp.DB.Models.Locations;
 using DatingApp.DB.Models.UserRelated;
 using DatingApp.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,16 @@ namespace DatingApp.Services.Implementations
         public LookupService(AppDbContext dbContext)
         {
             _dbContext = dbContext;
+        }
+
+        public async Task<IEnumerable<City>> GetCitiesAsync()
+        {
+            return await _dbContext.Cities.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Country>> GetCountriesAsync()
+        {
+            return await _dbContext.Countries.ToListAsync();
         }
 
         public async Task<IEnumerable<Sex>> GetSexAsync()
