@@ -15,7 +15,7 @@ namespace DatingApp.Services.Implementations
             _dbContext = dbContext;
         }
 
-        private IQueryable<User> FormQuery()
+        private IQueryable<User> FormBaseQuery()
         {
             return _dbContext.Users.Include(u => u.Country).Include(u => u.City)
                                    .SelectMany(
@@ -58,12 +58,12 @@ namespace DatingApp.Services.Implementations
             return query;
         }
 
-        public async Task<IEnumerable<User>> GetRecommendedUsersByFiltersAsync(FiltersDto filters)
+        public async Task<IEnumerable<User>> GetRecommendedUsersAsync(FiltersDto filters)
         {
             if (filters is null)
                 throw new ArgumentNullException(nameof(filters));
 
-            var query = FormQuery();
+            var query = FormBaseQuery();
             query = ApplyFilters(filters, query);
             return await query.ToListAsync();
         }

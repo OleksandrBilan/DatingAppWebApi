@@ -5,6 +5,6 @@ namespace DatingApp.Services.Interfaces
 {
     public interface IRecommendationsService
     {
-        Task<IEnumerable<User>> GetRecommendedUsersByFiltersAsync(FiltersDto filters);
+        Task<IEnumerable<User>> GetRecommendedUsersAsync(FiltersDto filters);
     }
 }

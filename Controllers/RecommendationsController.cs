@@ -20,12 +20,19 @@ namespace DatingApp.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("getRecommendedUsersByFilters")]
-        public async Task<IActionResult> GetRecommendedUsersByFiltersAsync(FiltersDto filters)
+        [HttpGet("getRecommendedUsers")]
+        public async Task<IActionResult> GetRecommendedUsersAsync([FromQuery] FiltersDto filters)
         {
-            var users = await _recommendationsService.GetRecommendedUsersByFiltersAsync(filters);
-            var result = _mapper.Map<IEnumerable<UserDto>>(users);
-            return Ok(result);
+            try
+            {
+                var users = await _recommendationsService.GetRecommendedUsersAsync(filters);
+                var result = _mapper.Map<IEnumerable<UserDto>>(users);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

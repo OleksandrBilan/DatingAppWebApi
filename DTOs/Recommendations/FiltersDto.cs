@@ -11,5 +11,7 @@
         public int? CityId { get; set; }
 
         public int? PreferedSexId { get; set; }
+
+        public bool? UseQuestionnaire { get; set; }
     }
 }
