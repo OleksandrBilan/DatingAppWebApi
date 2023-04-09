@@ -21,9 +21,10 @@ namespace DatingApp.Services.Implementations
         private readonly IConfiguration _configuration;
         private readonly AppDbContext _dbContext;
         private readonly EmailHelper _emailHelper;
+        private readonly IUserService _userService;
 
         public AuthService(UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole> roleManager, 
-                           IConfiguration configuration, AppDbContext dbContext, EmailHelper emailHelper)
+                           IConfiguration configuration, AppDbContext dbContext, EmailHelper emailHelper, IUserService userService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -31,6 +32,7 @@ namespace DatingApp.Services.Implementations
             _configuration = configuration;
             _dbContext = dbContext;
             _emailHelper = emailHelper;
+            _userService = userService;
         }
 
         #region Roles and admin users creation
@@ -135,8 +137,7 @@ namespace DatingApp.Services.Implementations
             if (result.Succeeded)
             {
                 var user = await _userManager.FindByEmailAsync(email);
-                user.Country = await _dbContext.Countries.FirstOrDefaultAsync(c => c.Code == user.CountryCode);
-                user.City = await _dbContext.Cities.FirstOrDefaultAsync(c => c.Id == user.CityId);
+                await _userService.PopulateUserInfo(user);
 
                 return user;
             }
