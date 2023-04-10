@@ -1,7 +1,7 @@
 ﻿using DatingApp.DTOs.Lookup;
 using System.ComponentModel.DataAnnotations;
 
-namespace DatingApp.DTOs.Auth
+namespace DatingApp.DTOs.User
 {
     public class UserDto
     {

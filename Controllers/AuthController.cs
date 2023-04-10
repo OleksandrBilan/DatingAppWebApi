@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DatingApp.DB.Models.UserRelated;
 using DatingApp.DTOs.Auth;
+using DatingApp.DTOs.User;
 using DatingApp.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 

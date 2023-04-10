@@ -13,5 +13,7 @@
         public int? PreferedSexId { get; set; }
 
         public bool? UseQuestionnaire { get; set; }
+
+        public string UserId { get; set; }
     }
 }

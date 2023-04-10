@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using DatingApp.DTOs.Auth;
 using DatingApp.DTOs.User;
 using DatingApp.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
