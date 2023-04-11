@@ -54,10 +54,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SMTP"));
 
-builder.Services.AddScoped<ILookupService, LookupService>();
-builder.Services.AddScoped<IQuestionnaireService, QuestionnaireService>();
-builder.Services.AddScoped<IRecommendationsService, RecommendationsService>();
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddTransient<ILookupService, LookupService>();
+builder.Services.AddTransient<IQuestionnaireService, QuestionnaireService>();
+builder.Services.AddTransient<IRecommendationsService, RecommendationsService>();
+builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<EmailHelper>();
 

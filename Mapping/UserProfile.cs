@@ -15,9 +15,7 @@ namespace DatingApp.Mapping
             CreateMap<RegisterDto, User>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email));
 
-            CreateMap<Tuple<User, double>, RecommendedUserDto>()
-                .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.Item1))
-                .ForMember(dest => dest.SimilarityScore, opt => opt.MapFrom(src => src.Item2));
+            CreateMap<RecommendedUser, RecommendedUserDto>(); ;
         }
     }
 }

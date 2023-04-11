@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
-using DatingApp.DB.Models.UserRelated;
 using DatingApp.DTOs.Recommendations;
-using DatingApp.Services.Helpers;
 using DatingApp.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,11 +19,12 @@ namespace DatingApp.Controllers
             _mapper = mapper;
         }
 
-        private async Task<IActionResult> ProcessRequestAsync(RecommendationTypes recommendationType, FiltersDto filters)
+        [HttpGet("getRecommendedUsers")]
+        public IActionResult GetRecommendedUsers([FromQuery] FiltersDto filters)
         {
             try
             {
-                var recommendations = await _recommendationsService.GetRecommendedUsersAsync(recommendationType, filters);
+                var recommendations = _recommendationsService.GetRecommendedUsers(filters);
                 var result = _mapper.Map<IEnumerable<RecommendedUserDto>>(recommendations);
                 return Ok(result);
             }
@@ -33,12 +32,6 @@ namespace DatingApp.Controllers
             {
                 return BadRequest(ex.Message);
             }
-        }
-
-        [HttpGet("getRecommendedUsersByFilters")]
-        public async Task<IActionResult> GetRecommendedUsersByFiltersAsync([FromQuery] FiltersDto filters)
-        {
-            return await ProcessRequestAsync(RecommendationTypes.FiltersRecommendation, filters);
         }
     }
 }

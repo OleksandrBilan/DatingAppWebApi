@@ -2,26 +2,26 @@
 using DatingApp.DB.Models.UserRelated;
 using DatingApp.DTOs.Recommendations;
 using DatingApp.Services.Helpers;
-using DatingApp.Services.Helpers.Recommendations;
 using DatingApp.Services.Interfaces;
 
 namespace DatingApp.Services.Implementations
 {
     public class RecommendationsService : IRecommendationsService
     {
-        private readonly Dictionary<RecommendationTypes, IRecommendationStrategy> _recommendationStrategies;
+        private readonly AppDbContext _dbContext;
 
         public RecommendationsService(AppDbContext dbContext)
         {
-            _recommendationStrategies = new Dictionary<RecommendationTypes, IRecommendationStrategy>
-            {
-                { RecommendationTypes.FiltersRecommendation, new FiltersRecommendationStrategy(dbContext) }
-            };
+            _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<Tuple<User, double>>> GetRecommendedUsersAsync(RecommendationTypes recommendationType, FiltersDto filters)
+        public IEnumerable<RecommendedUser> GetRecommendedUsers(FiltersDto filters)
         {
-            return await _recommendationStrategies[recommendationType].GetRecommendedUsersAsync(filters);
+            return _dbContext.FormBaseQuery(filters)
+                             .GetRecommendedUsersByFiltersAsync(filters)
+                             .CalculateUsersSimilarityScoreAsync(filters, _dbContext)
+                             .CalculateUsersSimilarityByQuestionnaireScoreAsync(filters, _dbContext)
+                             .OrderBySimilarityDescending();
         }
     }
 }
