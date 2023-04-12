@@ -11,13 +11,19 @@ namespace DatingApp.Services.Implementations
     {
         private readonly UserManager<User> _userManager;
         private readonly AppDbContext _dbContext;
-        private readonly string _userPhotosFolderPath;
+        private readonly string _usersImagesFolderPath;
 
         public UserService(UserManager<User> userManager, AppDbContext dbContext, IConfiguration configuration)
         {
             _userManager = userManager;
             _dbContext = dbContext;
-            _userPhotosFolderPath = configuration.GetValue<string>("UserPhotosFolderPath");
+
+            _usersImagesFolderPath = configuration.GetValue<string>("UsersImagesFolderPath");
+            if (string.IsNullOrWhiteSpace(_usersImagesFolderPath))
+            {
+                _usersImagesFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UsersImages");
+                Directory.CreateDirectory(_usersImagesFolderPath);
+            }
         }
 
         public async Task DeleteUserAsync(string userId)
@@ -68,7 +74,7 @@ namespace DatingApp.Services.Implementations
             if (string.IsNullOrEmpty(userId))
                 throw new ArgumentNullException(nameof(userId));
 
-            string folderPath = Path.Combine(_userPhotosFolderPath, userId);
+            string folderPath = Path.Combine(_usersImagesFolderPath, userId);
             if (Directory.Exists(folderPath))
             {
                 Directory.Delete(folderPath, true);
@@ -94,7 +100,7 @@ namespace DatingApp.Services.Implementations
 
         public async Task<Image> GetUserImageAsync(string userId)
         {
-            string userFolderPath = Path.Combine(_userPhotosFolderPath, userId);
+            string userFolderPath = Path.Combine(_usersImagesFolderPath, userId);
             if (Directory.Exists(userFolderPath))
             {
                 var files = Directory.GetFiles(userFolderPath);
@@ -111,7 +117,7 @@ namespace DatingApp.Services.Implementations
 
         public void DeleteUserImage(string userId)
         {
-            string userFolderPath = Path.Combine(_userPhotosFolderPath, userId);
+            string userFolderPath = Path.Combine(_usersImagesFolderPath, userId);
             if (Directory.Exists(userFolderPath))
             {
                 Directory.Delete(userFolderPath, true);
