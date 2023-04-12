@@ -63,5 +63,43 @@ namespace DatingApp.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpPost("uploadImage")]
+        public async Task<IActionResult> UploadImageAsync(string userId, IFormFile image)
+        {
+            if (image is null || image.Length == 0)
+                return BadRequest("Incorrect image file");
+
+            try
+            {
+                await _userService.UploadUserImageAsync(userId, image);
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("getImage")]
+        public async Task<IActionResult> GetUserImageAsync(string userId)
+        {
+            var image = await _userService.GetUserImageAsync(userId);
+            if (image is null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return File(image.Bytes, image.ContentType);
+            }
+        }
+
+        [HttpDelete("deleteImage")]
+        public IActionResult DeleteUserImageAsync(string userId)
+        {
+            _userService.DeleteUserImage(userId);
+            return Ok();
+        }
     }
 }

@@ -12,5 +12,11 @@ namespace DatingApp.Services.Interfaces
         public Task<User> GetUserByIdAsync(string id);
 
         public Task PopulateUserInfo(User user);
+
+        public Task UploadUserImageAsync(string userId, IFormFile file);
+
+        public Task<Image> GetUserImageAsync(string userId);
+
+        public void DeleteUserImage(string userId);
     }
 }

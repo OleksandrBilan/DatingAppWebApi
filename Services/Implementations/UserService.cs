@@ -11,11 +11,13 @@ namespace DatingApp.Services.Implementations
     {
         private readonly UserManager<User> _userManager;
         private readonly AppDbContext _dbContext;
+        private readonly string _userPhotosFolderPath;
 
-        public UserService(UserManager<User> userManager, AppDbContext dbContext)
+        public UserService(UserManager<User> userManager, AppDbContext dbContext, IConfiguration configuration)
         {
             _userManager = userManager;
             _dbContext = dbContext;
+            _userPhotosFolderPath = configuration.GetValue<string>("UserPhotosFolderPath");
         }
 
         public async Task DeleteUserAsync(string userId)
@@ -58,6 +60,61 @@ namespace DatingApp.Services.Implementations
             else
             {
                 throw new ArgumentException("No user with such id");
+            }
+        }
+
+        public async Task UploadUserImageAsync(string userId, IFormFile image)
+        {
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentNullException(nameof(userId));
+
+            string folderPath = Path.Combine(_userPhotosFolderPath, userId);
+            if (Directory.Exists(folderPath))
+            {
+                Directory.Delete(folderPath, true);
+            }
+            Directory.CreateDirectory(folderPath);
+
+            string filePath = Path.Combine(folderPath, image.FileName);
+            using var fileStream = new FileStream(filePath, FileMode.Create);
+            await image.CopyToAsync(fileStream);
+        }
+
+        private static string GetImageContentType(string filePath)
+        {
+            string extension = Path.GetExtension(filePath).ToLower();
+            return extension switch
+            {
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                ".gif" => "image/gif",
+                _ => "application/octet-stream",
+            };
+        }
+
+        public async Task<Image> GetUserImageAsync(string userId)
+        {
+            string userFolderPath = Path.Combine(_userPhotosFolderPath, userId);
+            if (Directory.Exists(userFolderPath))
+            {
+                var files = Directory.GetFiles(userFolderPath);
+                if (files.Any())
+                {
+                    var filePath = files[0];
+                    var fileBytes = await File.ReadAllBytesAsync(filePath);
+                    var fileContentType = GetImageContentType(filePath);
+                    return new Image { Bytes = fileBytes, ContentType = fileContentType };
+                }
+            }
+            return null;
+        }
+
+        public void DeleteUserImage(string userId)
+        {
+            string userFolderPath = Path.Combine(_userPhotosFolderPath, userId);
+            if (Directory.Exists(userFolderPath))
+            {
+                Directory.Delete(userFolderPath, true);
             }
         }
     }
