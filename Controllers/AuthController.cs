@@ -36,12 +36,12 @@ namespace DatingApp.Controllers
                 return BadRequest(ModelState);
 
             var user = _mapper.Map<User>(request);
-            bool succeeded = await _authService.RegisterAsync(user, request.Password, request.QuestionnaireAnswers);
+            string userId = await _authService.RegisterAsync(user, request.Password, request.QuestionnaireAnswers);
 
-            if (succeeded)
-                return Ok();
+            if (userId is null)
+                return StatusCode(500, "Failed to register the user");
             else
-                return BadRequest("Failed to register the user");
+                return Ok(userId);
         }
 
         [HttpPost("login")]

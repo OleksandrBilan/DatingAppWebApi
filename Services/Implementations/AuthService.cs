@@ -150,10 +150,10 @@ namespace DatingApp.Services.Implementations
             }
         }
 
-        public async Task<bool> RegisterAsync(User user, string password, IEnumerable<QuestionAnswerDto> questionsAnswers)
+        public async Task<string> RegisterAsync(User user, string password, IEnumerable<QuestionAnswerDto> questionsAnswers)
         {
             if (user is null)
-                return false;
+                throw new ArgumentNullException(nameof(user));
 
             var country = await _dbContext.Countries.FirstOrDefaultAsync(c => c.Code == user.Country.Code);
             if (country is null)
@@ -185,10 +185,14 @@ namespace DatingApp.Services.Implementations
                     user.Email,
                     "Email Confirmation",
                     $"Please click on the link to confirm your email:\n {confirmationLink}");
-            }
 
-            await _dbContext.SaveChangesAsync();
-            return result.Succeeded;
+                await _dbContext.SaveChangesAsync();
+                return user.Id;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public async Task<IEnumerable<string>> GetUserRolesAsync(User user)

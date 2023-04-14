@@ -9,7 +9,7 @@ namespace DatingApp.Services.Interfaces
 
         Task CreateUserRolesIfDontExistAsync();
 
-        Task<bool> RegisterAsync(User user, string password, IEnumerable<QuestionAnswerDto> questionsAnswers);
+        Task<string> RegisterAsync(User user, string password, IEnumerable<QuestionAnswerDto> questionsAnswers);
 
         Task<User> LoginAsync(string email, string password);
 

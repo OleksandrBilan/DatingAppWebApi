@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace DatingApp.Controllers
 {
     [Route("user")]
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
     public class UserController : Controller
     {
         private readonly IUserService _userService;
@@ -22,6 +21,7 @@ namespace DatingApp.Controllers
         }
 
         [HttpGet("getById")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
         public async Task<IActionResult> GetUserByIdAsync(string id)
         {
             var user = await _userService.GetUserByIdAsync(id);
@@ -38,6 +38,7 @@ namespace DatingApp.Controllers
         }
 
         [HttpDelete("delete")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
         public async Task<IActionResult> DeleteUserAsync(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
@@ -48,6 +49,7 @@ namespace DatingApp.Controllers
         }
 
         [HttpPut("update")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
         public async Task<IActionResult> UpdateUserAsync([FromBody] UpdateUserInfoDto request)
         {
             if (!ModelState.IsValid)
@@ -82,6 +84,7 @@ namespace DatingApp.Controllers
         }
 
         [HttpGet("getImage")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
         public async Task<IActionResult> GetUserImageAsync(string userId)
         {
             var image = await _userService.GetUserImageAsync(userId);
@@ -96,6 +99,7 @@ namespace DatingApp.Controllers
         }
 
         [HttpDelete("deleteImage")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
         public IActionResult DeleteUserImageAsync(string userId)
         {
             _userService.DeleteUserImage(userId);
