@@ -1,5 +1,6 @@
 ﻿using DatingApp.DB.Models.Locations;
 using DatingApp.DB.Models.Questionnaire;
+using DatingApp.DB.Models.Recommendations;
 using DatingApp.DB.Models.UserRelated;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ namespace DatingApp.DB
         public DbSet<Answer> Answers { get; set; }
         public DbSet<UserQuestionAnswer> UsersQuestionsAnswers { get; set; }
 
+        public DbSet<UserLike> UsersLikes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -50,6 +52,8 @@ namespace DatingApp.DB
                 .HasForeignKey(a => a.QuestionId);
 
             builder.Entity<UserQuestionAnswer>().HasKey(x => new { x.UserId, x.QuestionId });
+
+            builder.Entity<UserLike>().HasKey(x => new { x.LikingUserId, x.LikedUserId });
         }
     }
 }

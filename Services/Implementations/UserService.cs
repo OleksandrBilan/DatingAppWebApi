@@ -31,7 +31,14 @@ namespace DatingApp.Services.Implementations
             var user = await _userManager.FindByIdAsync(userId);
             if (user is not null)
             {
+                var userAnswers = await _dbContext.UsersQuestionsAnswers.Where(x => x.UserId == userId).ToListAsync();
+                _dbContext.UsersQuestionsAnswers.RemoveRange(userAnswers);
+
+                var userLikes = await _dbContext.UsersLikes.Where(x => x.LikingUserId == userId || x.LikedUserId == userId).ToListAsync();
+                _dbContext.UsersLikes.RemoveRange(userLikes);
+
                 await _userManager.DeleteAsync(user);
+                await _dbContext.SaveChangesAsync();
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using DatingApp.DB;
+using DatingApp.DB.Models.Recommendations;
 using DatingApp.DB.Models.UserRelated;
 using DatingApp.DTOs.Recommendations;
 using Microsoft.EntityFrameworkCore;

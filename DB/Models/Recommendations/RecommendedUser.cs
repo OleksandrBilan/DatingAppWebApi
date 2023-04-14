@@ -1,4 +1,6 @@
-﻿namespace DatingApp.DB.Models.UserRelated
+﻿using DatingApp.DB.Models.UserRelated;
+
+namespace DatingApp.DB.Models.Recommendations
 {
     public class RecommendedUser
     {

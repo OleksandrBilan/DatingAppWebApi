@@ -33,5 +33,22 @@ namespace DatingApp.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost("addUserLike")]
+        public async Task<IActionResult> AddUserLikeAsync([FromBody] UserLikeDto request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                await _recommendationsService.AddUserLikeAsync(request.LikingUserId, request.LikedUserId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
