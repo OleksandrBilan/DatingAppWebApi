@@ -8,5 +8,9 @@ namespace DatingApp.Services.Interfaces
         IEnumerable<RecommendedUser> GetRecommendedUsers(FiltersDto filters);
 
         Task AddUserLikeAsync(string likingUserId, string likedUserId);
+
+        Task<IEnumerable<RecommendedUser>> GetUserLikesAsync(string userId);
+
+        Task<IEnumerable<RecommendedUser>> GetUserMutualLikesAsync(string userId);
     }
 }

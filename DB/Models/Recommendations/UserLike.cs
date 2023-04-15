@@ -9,5 +9,7 @@ namespace DatingApp.DB.Models.Recommendations
 
         public string LikedUserId { get; set; }
         public User LikedUser { get; set; }
+
+        public DateTime DateTime { get; set; }
     }
 }

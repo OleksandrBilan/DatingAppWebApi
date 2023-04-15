@@ -9,5 +9,7 @@ namespace DatingApp.DTOs.Recommendations
 
         [Required]
         public string LikedUserId { get; set; }
+
+        public DateTime DateTime { get; set; }
     }
 }

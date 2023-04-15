@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DatingApp.Controllers
 {
     [Route("recommendations")]
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
+    //[Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
     public class RecommendationsController : Controller
     {
         private readonly IRecommendationsService _recommendationsService;
@@ -48,6 +48,36 @@ namespace DatingApp.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("getUserLikes")]
+        public async Task<IActionResult> GetUserLikesAsync(string userId)
+        {
+            if (!string.IsNullOrEmpty(userId))
+            {
+                var recommendations = await _recommendationsService.GetUserLikesAsync(userId);
+                var result = _mapper.Map<IEnumerable<RecommendedUserDto>>(recommendations);
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(userId);
+            }
+        }
+
+        [HttpGet("getUserMutualLikes")]
+        public async Task<IActionResult> GetUserMutualLikesAsync(string userId)
+        {
+            if (!string.IsNullOrEmpty(userId))
+            {
+                var recommendations = await _recommendationsService.GetUserMutualLikesAsync(userId);
+                var result = _mapper.Map<IEnumerable<RecommendedUserDto>>(recommendations);
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(userId);
             }
         }
     }

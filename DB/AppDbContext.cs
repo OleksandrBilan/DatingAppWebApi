@@ -21,6 +21,7 @@ namespace DatingApp.DB
         public DbSet<UserQuestionAnswer> UsersQuestionsAnswers { get; set; }
 
         public DbSet<UserLike> UsersLikes { get; set; }
+        public DbSet<MutualLike> MutualLikes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -54,6 +55,8 @@ namespace DatingApp.DB
             builder.Entity<UserQuestionAnswer>().HasKey(x => new { x.UserId, x.QuestionId });
 
             builder.Entity<UserLike>().HasKey(x => new { x.LikingUserId, x.LikedUserId });
+
+            builder.Entity<MutualLike>().HasKey(x => new { x.User1Id, x.User2Id });
         }
     }
 }

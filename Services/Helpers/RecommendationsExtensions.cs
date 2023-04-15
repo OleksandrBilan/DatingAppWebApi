@@ -25,7 +25,7 @@ namespace DatingApp.Services.Helpers
                                   .Select(x => x.User);
         }
 
-        public static IEnumerable<RecommendedUser> GetRecommendedUsersByFiltersAsync(this IQueryable<User> query, FiltersDto filters)
+        public static IEnumerable<RecommendedUser> GetRecommendedUsersByFilters(this IQueryable<User> query, FiltersDto filters)
         {
             if (filters is null)
                 return Array.Empty<RecommendedUser>();
@@ -67,9 +67,9 @@ namespace DatingApp.Services.Helpers
             return age;
         }
 
-        public static IEnumerable<RecommendedUser> CalculateUsersSimilarityScoreAsync(this IEnumerable<RecommendedUser> recommendedUsers, FiltersDto filters, AppDbContext dbContext)
+        public static IEnumerable<RecommendedUser> CalculateUsersSimilarityScore(this IEnumerable<RecommendedUser> recommendedUsers, FiltersDto filters, AppDbContext dbContext)
         {
-            if (filters is null || filters.UserId is null)
+            if (filters is null || filters.UserId is null || !recommendedUsers.Any())
                 return recommendedUsers;
 
             var currentUser = dbContext.Users.FirstOrDefault(u => u.Id == filters.UserId);
@@ -94,9 +94,9 @@ namespace DatingApp.Services.Helpers
             return recommendedUsers;
         }
 
-        public static IEnumerable<RecommendedUser> CalculateUsersSimilarityByQuestionnaireScoreAsync(this IEnumerable<RecommendedUser> recommendedUsers, FiltersDto filters, AppDbContext dbContext)
+        public static IEnumerable<RecommendedUser> CalculateUsersSimilarityByQuestionnaireScore(this IEnumerable<RecommendedUser> recommendedUsers, FiltersDto filters, AppDbContext dbContext)
         {
-            if (filters is null || !filters.UseQuestionnaire.HasValue || !filters.UseQuestionnaire.Value || filters.UserId is null)
+            if (filters is null || !filters.UseQuestionnaire.HasValue || !filters.UseQuestionnaire.Value || filters.UserId is null || !recommendedUsers.Any())
                 return recommendedUsers;
 
             int questionsCount = dbContext.Questions.Count();
@@ -125,7 +125,19 @@ namespace DatingApp.Services.Helpers
 
         public static IEnumerable<RecommendedUser> OrderBySimilarityDescending(this IEnumerable<RecommendedUser> recommendedUsers)
         {
-            return recommendedUsers.OrderByDescending(x => x.SimilarityScore);
+            return recommendedUsers?.OrderByDescending(x => x.SimilarityScore);
+        }
+
+        public static IEnumerable<RecommendedUser> ExcludeLikedUsers(this IEnumerable<RecommendedUser> recommendedUsers, FiltersDto filters, AppDbContext dbContext)
+        {
+            if (filters is null || filters.UserId is null || !recommendedUsers.Any())
+                return recommendedUsers;
+
+            var userLikes = dbContext.UsersLikes.Where(x => x.LikingUserId == filters.UserId).ToList();
+            var mutualLikes = dbContext.MutualLikes.Where(x => x.User1Id == filters.UserId || x.User2Id == filters.UserId).ToList();
+            return recommendedUsers.Where(r => 
+                !userLikes.Any(x => x.LikedUserId == r.User.Id) && 
+                !mutualLikes.Any(x => x.User1Id == r.User.Id || x.User2Id == r.User.Id));
         }
     }
 }
