@@ -24,5 +24,14 @@ namespace DatingApp.Chat.Hubs
                 await Clients.Group(connection.ChatId).SendAsync("ReceiveMessage", connection.UserId, message);
             }
         }
+
+        public override Task OnDisconnectedAsync(Exception exception)
+        {
+            if (_connections.TryGetValue(Context.ConnectionId, out UserConnection connection))
+            {
+                _connections.Remove(Context.ConnectionId);
+            }
+            return base.OnDisconnectedAsync(exception);
+        }
     }
 }
