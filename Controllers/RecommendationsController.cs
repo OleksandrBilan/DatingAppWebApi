@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DatingApp.Controllers
 {
     [Route("recommendations")]
-    //[Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
     public class RecommendationsController : Controller
     {
         private readonly IRecommendationsService _recommendationsService;
@@ -79,6 +79,57 @@ namespace DatingApp.Controllers
             {
                 return BadRequest(userId);
             }
+        }
+
+        [HttpDelete("deleteUserLike")]
+        public async Task<IActionResult> DeleteUserLikeAsync(int likeId)
+        {
+            await _recommendationsService.DeleteLikeAsync(likeId);
+            return Ok();
+        }
+
+        [HttpDelete("deleteMutualLike")]
+        public async Task<IActionResult> DeleteMutualLikeAsync(int likeId)
+        {
+            await _recommendationsService.DeleteMutualLikeAsync(likeId);
+            return Ok();
+        }
+
+        [HttpPost("createChat")]
+        public async Task<IActionResult> CreateChatAsync([FromBody] CreateChatDto request)
+        {
+            try
+            {
+                int chatId = await _recommendationsService.CreateChatAsync(request.MutualLikeId);
+                return Ok(chatId);
+            } 
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("deleteChat")]
+        public async Task<IActionResult> DeleteChatAsync(int chatId)
+        {
+            await _recommendationsService.DeleteChatAsync(chatId);
+            return Ok();
+        }
+
+        [HttpGet("getUserChats")]
+        public async Task<IActionResult> GetUserChatsAsync(string userId)
+        {
+            var chats = await _recommendationsService.GetUserChatsAsync(userId);
+            var result = _mapper.Map<IEnumerable<UsersChatDto>>(chats);
+            return Ok(result);
+        }
+
+        [HttpGet("getChatMessages")]
+        public async Task<IActionResult> GetChatMessagesAsync(int chatId)
+        {
+            var messages = await _recommendationsService.GetChatMessagesAsync(chatId);
+            var result = _mapper.Map<IEnumerable<MessageDto>>(messages);
+            return Ok(result);
         }
     }
 }

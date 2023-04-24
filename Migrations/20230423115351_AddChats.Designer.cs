@@ -4,6 +4,7 @@ using DatingApp.DB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DatingApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230423115351_AddChats")]
+    partial class AddChats
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,9 +60,6 @@ namespace DatingApp.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("CreatedDateTime")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("User1Id")
                         .HasColumnType("nvarchar(450)");
@@ -185,21 +184,13 @@ namespace DatingApp.Migrations
 
             modelBuilder.Entity("DatingApp.DB.Models.Recommendations.MutualLike", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<string>("User1Id")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("User2Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("User1Id");
+                    b.HasKey("User1Id", "User2Id");
 
                     b.HasIndex("User2Id");
 
@@ -208,26 +199,18 @@ namespace DatingApp.Migrations
 
             modelBuilder.Entity("DatingApp.DB.Models.Recommendations.UserLike", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("DateTime")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("LikingUserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LikedUserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("LikingUserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("datetime2");
 
-                    b.HasKey("Id");
+                    b.HasKey("LikingUserId", "LikedUserId");
 
                     b.HasIndex("LikedUserId");
-
-                    b.HasIndex("LikingUserId");
 
                     b.ToTable("UsersLikes");
                 });
@@ -570,11 +553,15 @@ namespace DatingApp.Migrations
                 {
                     b.HasOne("DatingApp.DB.Models.UserRelated.User", "User1")
                         .WithMany()
-                        .HasForeignKey("User1Id");
+                        .HasForeignKey("User1Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("DatingApp.DB.Models.UserRelated.User", "User2")
                         .WithMany()
-                        .HasForeignKey("User2Id");
+                        .HasForeignKey("User2Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User1");
 
@@ -585,11 +572,15 @@ namespace DatingApp.Migrations
                 {
                     b.HasOne("DatingApp.DB.Models.UserRelated.User", "LikedUser")
                         .WithMany()
-                        .HasForeignKey("LikedUserId");
+                        .HasForeignKey("LikedUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("DatingApp.DB.Models.UserRelated.User", "LikingUser")
                         .WithMany()
-                        .HasForeignKey("LikingUserId");
+                        .HasForeignKey("LikingUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("LikedUser");
 

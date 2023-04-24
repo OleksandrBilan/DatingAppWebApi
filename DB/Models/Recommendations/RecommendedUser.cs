@@ -7,5 +7,7 @@ namespace DatingApp.DB.Models.Recommendations
         public User User { get; set; }
 
         public double SimilarityScore { get; set; }
+
+        public int? LikeId { get; set; }
     }
 }

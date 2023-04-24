@@ -4,6 +4,8 @@ namespace DatingApp.DB.Models.Recommendations
 {
     public class MutualLike
     {
+        public int Id { get; set; }
+
         public string User1Id { get; set; }
         public User User1 { get; set; }
 

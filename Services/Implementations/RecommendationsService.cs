@@ -1,4 +1,5 @@
 ﻿using DatingApp.DB;
+using DatingApp.DB.Models.Chats;
 using DatingApp.DB.Models.Recommendations;
 using DatingApp.DTOs.Recommendations;
 using DatingApp.Services.Helpers;
@@ -21,6 +22,7 @@ namespace DatingApp.Services.Implementations
             return _dbContext.FormBaseQuery(filters)
                              .GetRecommendedUsersByFilters(filters)
                              .ExcludeLikedUsers(filters, _dbContext)
+                             .ExcludeExistingChatsUsers(filters, _dbContext)
                              .CalculateUsersSimilarityScore(filters, _dbContext)
                              .CalculateUsersSimilarityByQuestionnaireScore(filters, _dbContext)
                              .OrderBySimilarityDescending();
@@ -58,13 +60,10 @@ namespace DatingApp.Services.Implementations
             }
         }
 
-        private async Task<IEnumerable<RecommendedUser>> MapToRecommendedUsers(IEnumerable<string> userIds, string currentUserId)
+        private IEnumerable<RecommendedUser> CalculateSimilarityScore(IEnumerable<RecommendedUser> recommendedUsers, string currentUserId)
         {
-            var recommendedUsers = await _dbContext.Users.Where(u => userIds.Any(id => id == u.Id))
-                                                         .Include(u => u.Country)
-                                                         .Include(u => u.City)
-                                                         .Select(u => new RecommendedUser { User = u, SimilarityScore = 0d })
-                                                         .ToListAsync();
+            if (recommendedUsers is null || !recommendedUsers.Any())
+                return recommendedUsers;
 
             var filters = new FiltersDto { UserId = currentUserId, UseQuestionnaire = true };
             return recommendedUsers.CalculateUsersSimilarityScore(filters, _dbContext)
@@ -73,24 +72,99 @@ namespace DatingApp.Services.Implementations
 
         public async Task<IEnumerable<RecommendedUser>> GetUserLikesAsync(string userId)
         {
-            var userIds = await _dbContext.UsersLikes.Where(x => x.LikedUserId == userId)
-                                                     .Select(x => x.LikingUserId)
-                                                     .ToListAsync();
-            return await MapToRecommendedUsers(userIds, userId);
+            var recommendedUsers = await _dbContext.UsersLikes.Where(x => x.LikedUserId == userId)
+                                                              .Include(x => x.LikingUser)
+                                                              .ThenInclude(u => u.Country)
+                                                              .Include(x => x.LikingUser)
+                                                              .ThenInclude(u => u.City)
+                                                              .Select(x => new RecommendedUser { User = x.LikingUser, SimilarityScore = 0d, LikeId = x.Id })
+                                                              .ToListAsync();
+            return CalculateSimilarityScore(recommendedUsers, userId);
         }
 
         public async Task<IEnumerable<RecommendedUser>> GetUserMutualLikesAsync(string userId)
         {
-            var userIds1 = await _dbContext.MutualLikes.Where(x => x.User2Id == userId)
-                                                       .Select(x => x.User1Id)
-                                                       .ToListAsync();
+            var recommendedUsers1 = await _dbContext.MutualLikes.Where(x => x.User2Id == userId)
+                                                                .Include(x => x.User1)
+                                                                .ThenInclude(u => u.Country)
+                                                                .Include(x => x.User1)
+                                                                .ThenInclude(u => u.City)
+                                                                .Select(x => new RecommendedUser { User = x.User1, SimilarityScore = 0d, LikeId = x.Id })
+                                                                .ToListAsync();
 
-            var userIds2 = await _dbContext.MutualLikes.Where(x => x.User1Id == userId)
-                                                       .Select(x => x.User2Id)
-                                                       .ToListAsync();
+            var recommendedUsers2 = await _dbContext.MutualLikes.Where(x => x.User1Id == userId)
+                                                                .Include(x => x.User2)
+                                                                .ThenInclude(u => u.Country)
+                                                                .Include(x => x.User2)
+                                                                .ThenInclude(u => u.City)
+                                                                .Select(x => new RecommendedUser { User = x.User2, SimilarityScore = 0d, LikeId = x.Id })
+                                                                .ToListAsync();
 
-            var userIds = userIds1.Concat(userIds2);
-            return await MapToRecommendedUsers(userIds, userId);
+            var recommendedUsers = recommendedUsers1.Concat(recommendedUsers2);
+            return CalculateSimilarityScore(recommendedUsers, userId);
+        }
+
+        public async Task DeleteLikeAsync(int likeId)
+        {
+            var like = await _dbContext.UsersLikes.FirstOrDefaultAsync(x => x.Id == likeId);
+            if (like is not null)
+            {
+                _dbContext.UsersLikes.Remove(like);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
+        public async Task DeleteMutualLikeAsync(int mutualLikeId)
+        {
+            var like = await _dbContext.MutualLikes.FirstOrDefaultAsync(x => x.Id == mutualLikeId);
+            if (like is not null)
+            {
+                _dbContext.MutualLikes.Remove(like);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
+        public async Task<int> CreateChatAsync(int mutualLikeId)
+        {
+            var mutualLike = await _dbContext.MutualLikes.FirstOrDefaultAsync(x => x.Id == mutualLikeId);
+            if (mutualLike is null)
+                throw new ArgumentException("No mutual like with such id", nameof(mutualLikeId));
+
+            var chat = new UsersChat
+            {
+                User1Id = mutualLike.User1Id,
+                User2Id = mutualLike.User2Id,
+                CreatedDateTime = DateTime.Now,
+            };
+            await _dbContext.Chats.AddAsync(chat);
+            _dbContext.MutualLikes.Remove(mutualLike);
+            await _dbContext.SaveChangesAsync();
+            return chat.Id;
+        }
+
+        public async Task DeleteChatAsync(int chatId)
+        {
+            var chat = await _dbContext.Chats.FirstOrDefaultAsync(x => x.Id == chatId);
+            if (chat is not null)
+            {
+                _dbContext.Chats.Remove(chat);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
+        public async Task<IEnumerable<UsersChat>> GetUserChatsAsync(string userId)
+        {
+            var chats = await _dbContext.Chats.Where(c => c.User1Id == userId || c.User2Id == userId)
+                                              .Include(c => c.User1)
+                                              .Include(c => c.User2)
+                                              .ToListAsync();
+            return chats.OrderByDescending(c => c.CreatedDateTime);
+        }
+
+        public async Task<IEnumerable<Message>> GetChatMessagesAsync(int chatId)
+        {
+            var messages = await _dbContext.Messages.Where(m => m.ChatId == chatId).Include(m => m.Sender).ToListAsync();
+            return messages.OrderBy(m => m.DateTime);
         }
     }
 }

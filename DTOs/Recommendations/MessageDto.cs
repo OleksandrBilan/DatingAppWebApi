@@ -1,16 +1,14 @@
-﻿using DatingApp.DB.Models.UserRelated;
-
-namespace DatingApp.DB.Models.Chats
+﻿namespace DatingApp.DTOs.Recommendations
 {
-    public class Message
+    public class MessageDto
     {
         public int Id { get; set; }
 
         public string SenderId { get; set; }
-        public User Sender { get; set; }
+
+        public string SenderName { get; set; }
 
         public int ChatId { get; set; }
-        public UsersChat Chat { get; set; }
 
         public string Text { get; set; }
 

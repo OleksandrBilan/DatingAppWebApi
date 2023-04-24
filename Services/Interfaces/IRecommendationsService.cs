@@ -1,4 +1,5 @@
-﻿using DatingApp.DB.Models.Recommendations;
+﻿using DatingApp.DB.Models.Chats;
+using DatingApp.DB.Models.Recommendations;
 using DatingApp.DTOs.Recommendations;
 
 namespace DatingApp.Services.Interfaces
@@ -12,5 +13,17 @@ namespace DatingApp.Services.Interfaces
         Task<IEnumerable<RecommendedUser>> GetUserLikesAsync(string userId);
 
         Task<IEnumerable<RecommendedUser>> GetUserMutualLikesAsync(string userId);
+
+        Task DeleteLikeAsync(int likeId);
+
+        Task DeleteMutualLikeAsync(int mutualLikeId);
+
+        Task<int> CreateChatAsync(int mutualLikeId);
+
+        Task DeleteChatAsync(int chatId);
+
+        Task<IEnumerable<UsersChat>> GetUserChatsAsync(string userId);
+
+        Task<IEnumerable<Message>> GetChatMessagesAsync(int chatId);
     }
 }

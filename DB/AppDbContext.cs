@@ -1,4 +1,5 @@
-﻿using DatingApp.DB.Models.Locations;
+﻿using DatingApp.DB.Models.Chats;
+using DatingApp.DB.Models.Locations;
 using DatingApp.DB.Models.Questionnaire;
 using DatingApp.DB.Models.Recommendations;
 using DatingApp.DB.Models.UserRelated;
@@ -22,6 +23,9 @@ namespace DatingApp.DB
 
         public DbSet<UserLike> UsersLikes { get; set; }
         public DbSet<MutualLike> MutualLikes { get; set; }
+
+        public DbSet<UsersChat> Chats { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -53,10 +57,6 @@ namespace DatingApp.DB
                 .HasForeignKey(a => a.QuestionId);
 
             builder.Entity<UserQuestionAnswer>().HasKey(x => new { x.UserId, x.QuestionId });
-
-            builder.Entity<UserLike>().HasKey(x => new { x.LikingUserId, x.LikedUserId });
-
-            builder.Entity<MutualLike>().HasKey(x => new { x.User1Id, x.User2Id });
         }
     }
 }

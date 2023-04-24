@@ -2,7 +2,7 @@
 
 namespace DatingApp.DB.Models.Chats
 {
-    public class Chat
+    public class UsersChat
     {
         public int Id { get; set; }
 
@@ -11,5 +11,7 @@ namespace DatingApp.DB.Models.Chats
 
         public string User2Id { get; set; }
         public User User2 { get; set; }
+
+        public DateTime CreatedDateTime { get; set; }
     }
 }

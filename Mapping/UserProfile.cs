@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DatingApp.DB.Models.Chats;
 using DatingApp.DB.Models.Recommendations;
 using DatingApp.DB.Models.UserRelated;
 using DatingApp.DTOs.Auth;
@@ -16,7 +17,12 @@ namespace DatingApp.Mapping
             CreateMap<RegisterDto, User>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email));
 
-            CreateMap<RecommendedUser, RecommendedUserDto>(); ;
+            CreateMap<RecommendedUser, RecommendedUserDto>();
+
+            CreateMap<UsersChat, UsersChatDto>();
+            
+            CreateMap<Message, MessageDto>()
+                .ForMember(dest => dest.SenderName, opt => opt.MapFrom(src => src.Sender.Name));
         }
     }
 }

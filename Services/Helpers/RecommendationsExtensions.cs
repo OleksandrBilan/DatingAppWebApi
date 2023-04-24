@@ -139,5 +139,14 @@ namespace DatingApp.Services.Helpers
                 !userLikes.Any(x => x.LikedUserId == r.User.Id) && 
                 !mutualLikes.Any(x => x.User1Id == r.User.Id || x.User2Id == r.User.Id));
         }
+
+        public static IEnumerable<RecommendedUser> ExcludeExistingChatsUsers(this IEnumerable<RecommendedUser> recommendedUsers, FiltersDto filters, AppDbContext dbContext)
+        {
+            if (filters is null || filters.UserId is null || !recommendedUsers.Any())
+                return recommendedUsers;
+
+            var userChats = dbContext.Chats.Where(x => x.User1Id == filters.UserId || x.User2Id == filters.UserId).ToList();
+            return recommendedUsers.Where(r => !userChats.Any(x => x.User1Id == r.User.Id || x.User2Id == r.User.Id));
+        }
     }
 }
