@@ -147,6 +147,9 @@ namespace DatingApp.Services.Implementations
             var chat = await _dbContext.Chats.FirstOrDefaultAsync(x => x.Id == chatId);
             if (chat is not null)
             {
+                var chatMessages = await _dbContext.Messages.Where(m => m.ChatId == chatId).ToListAsync();
+                _dbContext.Messages.RemoveRange(chatMessages);
+
                 _dbContext.Chats.Remove(chat);
                 await _dbContext.SaveChangesAsync();
             }
@@ -161,10 +164,16 @@ namespace DatingApp.Services.Implementations
             return chats.OrderByDescending(c => c.CreatedDateTime);
         }
 
-        public async Task<IEnumerable<Message>> GetChatMessagesAsync(int chatId)
+        public async Task<UsersChat> GetChatAsync(int chatId)
         {
-            var messages = await _dbContext.Messages.Where(m => m.ChatId == chatId).Include(m => m.Sender).ToListAsync();
-            return messages.OrderBy(m => m.DateTime);
+            var chat = await _dbContext.Chats.Where(c => c.Id == chatId)
+                                             .Include(c => c.User1)
+                                             .Include(c => c.User2)
+                                             .Include(c => c.Messages)
+                                             .FirstOrDefaultAsync();
+            if (chat is not null)
+                chat.Messages = chat.Messages?.OrderBy(m => m.DateTime)?.ToList();
+            return chat;
         }
     }
 }

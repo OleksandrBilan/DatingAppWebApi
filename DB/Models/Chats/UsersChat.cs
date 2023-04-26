@@ -13,5 +13,7 @@ namespace DatingApp.DB.Models.Chats
         public User User2 { get; set; }
 
         public DateTime CreatedDateTime { get; set; }
+
+        public ICollection<Message> Messages { get; set; }
     }
 }

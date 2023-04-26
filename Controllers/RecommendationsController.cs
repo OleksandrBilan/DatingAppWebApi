@@ -124,11 +124,14 @@ namespace DatingApp.Controllers
             return Ok(result);
         }
 
-        [HttpGet("getChatMessages")]
-        public async Task<IActionResult> GetChatMessagesAsync(int chatId)
+        [HttpGet("getChat")]
+        public async Task<IActionResult> GetChatInfoAsync(int chatId)
         {
-            var messages = await _recommendationsService.GetChatMessagesAsync(chatId);
-            var result = _mapper.Map<IEnumerable<MessageDto>>(messages);
+            var chat = await _recommendationsService.GetChatAsync(chatId);
+            if (chat is null)
+                return BadRequest("No chat with such id");
+
+            var result = _mapper.Map<UsersChatDto>(chat);
             return Ok(result);
         }
     }

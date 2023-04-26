@@ -11,5 +11,7 @@ namespace DatingApp.DTOs.Recommendations
         public UserDto User2 { get; set; }
 
         public DateTime CreatedDateTime { get; set; }
+
+        public IEnumerable<MessageDto> Messages { get; set; }
     }
 }
