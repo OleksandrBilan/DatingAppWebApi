@@ -13,5 +13,7 @@ namespace DatingApp.DTOs.Recommendations
         public DateTime CreatedDateTime { get; set; }
 
         public IEnumerable<MessageDto> Messages { get; set; }
+
+        public int UnreadMessagesCount { get; set; }
     }
 }

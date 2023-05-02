@@ -36,11 +36,15 @@ namespace DatingApp.Chat.Hubs
                     SenderId = connection.UserId,
                     Text = message,
                     DateTime = DateTime.Now,
+                    StatusId = 1
                 };
                 _dbContext.Messages.Add(newMessage);
                 await _dbContext.SaveChangesAsync();
 
-                var newMessageInfo = await _dbContext.Messages.Where(m => m.Id == newMessage.Id).Include(m => m.Sender).FirstOrDefaultAsync();
+                var newMessageInfo = await _dbContext.Messages.Where(m => m.Id == newMessage.Id)
+                                                              .Include(m => m.Sender)
+                                                              .Include(m => m.Status)
+                                                              .FirstOrDefaultAsync();
                 var messageDto = _mapper.Map<MessageDto>(newMessageInfo);
                 await Clients.Group(connection.ChatId)
                              .SendAsync("ReceiveMessage", messageDto);

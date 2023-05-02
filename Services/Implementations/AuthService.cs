@@ -39,7 +39,7 @@ namespace DatingApp.Services.Implementations
 
         public async Task CreateUserRolesIfDontExistAsync()
         {
-            var userRoles = new string[2] { "Admin", "User" };
+            var userRoles = new string[] { "Admin", "User", "VIP" };
             foreach (var role in userRoles)
             {
                 var roleExists = await _roleManager.RoleExistsAsync(role);

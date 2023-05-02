@@ -15,5 +15,8 @@ namespace DatingApp.DB.Models.Chats
         public string Text { get; set; }
 
         public DateTime DateTime { get; set; }
+
+        public int StatusId { get; set; }
+        public MessageStatus Status { get; set; }
     }
 }

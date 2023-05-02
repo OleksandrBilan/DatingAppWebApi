@@ -26,6 +26,7 @@ namespace DatingApp.DB
 
         public DbSet<UsersChat> Chats { get; set; }
         public DbSet<Message> Messages { get; set; }
+        public DbSet<MessageStatus> MessageStatuses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -43,6 +44,11 @@ namespace DatingApp.DB
 
             builder.Entity<City>().HasData(
                 new City { Id = 1, Name = "Default City", CountryCode = "XX" }
+            );
+
+            builder.Entity<MessageStatus>().HasData(
+                new MessageStatus { Id = 1, Name = "Sent" },
+                new MessageStatus { Id = 2, Name = "Read" }
             );
 
             builder.Entity<User>()

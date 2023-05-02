@@ -4,6 +4,7 @@ using DatingApp.DB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DatingApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230502123229_AddMessageStatuses")]
+    partial class AddMessageStatuses
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -69,19 +71,7 @@ namespace DatingApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MessageStatuses");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Sent"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Read"
-                        });
+                    b.ToTable("MessagesStatuses");
                 });
 
             modelBuilder.Entity("DatingApp.DB.Models.Chats.UsersChat", b =>

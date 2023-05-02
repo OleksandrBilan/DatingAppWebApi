@@ -28,6 +28,8 @@ namespace DatingApp.Services.Implementations
                              .OrderBySimilarityDescending();
         }
 
+        #region Likes
+
         public async Task AddUserLikeAsync(string likingUserId, string likedUserId)
         {
             bool likingUserExists = await _dbContext.Users.AnyAsync(u => u.Id == likingUserId);
@@ -124,6 +126,10 @@ namespace DatingApp.Services.Implementations
             }
         }
 
+        #endregion
+
+        #region Chats
+
         public async Task<int> CreateChatAsync(int mutualLikeId)
         {
             var mutualLike = await _dbContext.MutualLikes.FirstOrDefaultAsync(x => x.Id == mutualLikeId);
@@ -155,13 +161,17 @@ namespace DatingApp.Services.Implementations
             }
         }
 
-        public async Task<IEnumerable<UsersChat>> GetUserChatsAsync(string userId)
+        public async Task<IEnumerable<Tuple<UsersChat, int>>> GetUserChatsAsync(string userId)
         {
             var chats = await _dbContext.Chats.Where(c => c.User1Id == userId || c.User2Id == userId)
                                               .Include(c => c.User1)
                                               .Include(c => c.User2)
+                                              .Include(c => c.Messages)
+                                              .OrderByDescending(c => c.CreatedDateTime)
                                               .ToListAsync();
-            return chats.OrderByDescending(c => c.CreatedDateTime);
+
+            var chatsWithUnreadMessagesCount = chats.Select(c => new Tuple<UsersChat, int>(c, c.Messages is null ? 0 : c.Messages.Count(m => m.SenderId != userId && m.StatusId == 1)));
+            return chatsWithUnreadMessagesCount;
         }
 
         public async Task<UsersChat> GetChatAsync(int chatId)
@@ -170,10 +180,36 @@ namespace DatingApp.Services.Implementations
                                              .Include(c => c.User1)
                                              .Include(c => c.User2)
                                              .Include(c => c.Messages)
+                                             .ThenInclude(m => m.Status)
                                              .FirstOrDefaultAsync();
             if (chat is not null)
                 chat.Messages = chat.Messages?.OrderBy(m => m.DateTime)?.ToList();
             return chat;
         }
+
+        public async Task SetChatMessagesReadAsync(int chatId, string userId)
+        {
+            var chat = await _dbContext.Chats.Where(c => c.Id == chatId)
+                                                .Include(c => c.User1)
+                                                .Include(c => c.User2)
+                                                .Include(c => c.Messages)
+                                                .ThenInclude(m => m.Status)
+                                                .FirstOrDefaultAsync();
+
+            if (chat is not null && chat.Messages is not null && chat.Messages.Count > 0)
+            {
+                var unreadMessages = chat.Messages.Where(m => m.SenderId != userId && m.StatusId == 1);
+                if (unreadMessages.Any())
+                {
+                    foreach (var message in unreadMessages)
+                    {
+                        message.StatusId = 2;
+                    }
+                    await _dbContext.SaveChangesAsync();
+                }
+            }
+        }
+
+        #endregion
     }
 }
