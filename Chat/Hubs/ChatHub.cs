@@ -20,10 +20,15 @@ namespace DatingApp.Chat.Hubs
             _mapper = mapper;
         }
 
-        public async Task JoinChat(UserConnection connection)
+        public async Task<bool> JoinChat(UserConnection connection)
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, connection.ChatId);
-            _connections[Context.ConnectionId] = connection;
+            if (!_connections.Any(c => c.Value.ChatId == connection.ChatId && c.Value.UserId == connection.UserId))
+            {
+                await Groups.AddToGroupAsync(Context.ConnectionId, connection.ChatId);
+                _connections[Context.ConnectionId] = connection;
+                return true;
+            }
+            return false;
         }
 
         public async Task SendMessage(string message)

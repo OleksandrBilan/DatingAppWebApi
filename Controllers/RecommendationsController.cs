@@ -138,8 +138,11 @@ namespace DatingApp.Controllers
         [HttpPost("setChatMessagesRead")]
         public async Task<IActionResult> SetChatMessagesReadAsync([FromBody] SetChatMessagesReadDto request)
         {
-            await _recommendationsService.SetChatMessagesReadAsync(request.ChatId, request.UserId);
-            return Ok();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _recommendationsService.SetChatMessagesReadAsync(request.ChatId, request.UserId);
+            return Ok(result);
         }
     }
 }

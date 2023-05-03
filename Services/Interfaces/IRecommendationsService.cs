@@ -26,6 +26,6 @@ namespace DatingApp.Services.Interfaces
 
         Task<UsersChat> GetChatAsync(int chatId);
 
-        Task SetChatMessagesReadAsync(int chatId, string userId);
+        Task<bool> SetChatMessagesReadAsync(int chatId, string userId);
     }
 }
