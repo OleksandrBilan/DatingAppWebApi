@@ -187,31 +187,6 @@ namespace DatingApp.Services.Implementations
             return chat;
         }
 
-        public async Task<bool> SetChatMessagesReadAsync(int chatId, string userId)
-        {
-            var chat = await _dbContext.Chats.Where(c => c.Id == chatId)
-                                             .Include(c => c.User1)
-                                             .Include(c => c.User2)
-                                             .Include(c => c.Messages)
-                                             .ThenInclude(m => m.Status)
-                                             .FirstOrDefaultAsync();
-
-            if (chat is not null && chat.Messages is not null && chat.Messages.Count > 0)
-            {
-                var unreadMessages = chat.Messages.Where(m => m.SenderId != userId && m.StatusId == 1);
-                if (unreadMessages.Any())
-                {
-                    foreach (var message in unreadMessages)
-                    {
-                        message.StatusId = 2;
-                    }
-                    await _dbContext.SaveChangesAsync();
-                    return true;
-                }
-            }
-            return false;
-        }
-
         #endregion
     }
 }

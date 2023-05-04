@@ -134,15 +134,5 @@ namespace DatingApp.Controllers
             var result = _mapper.Map<UsersChatDto>(chat);
             return Ok(result);
         }
-
-        [HttpPost("setChatMessagesRead")]
-        public async Task<IActionResult> SetChatMessagesReadAsync([FromBody] SetChatMessagesReadDto request)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var result = await _recommendationsService.SetChatMessagesReadAsync(request.ChatId, request.UserId);
-            return Ok(result);
-        }
     }
 }

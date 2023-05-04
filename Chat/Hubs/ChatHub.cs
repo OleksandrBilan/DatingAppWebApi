@@ -56,6 +56,33 @@ namespace DatingApp.Chat.Hubs
             }
         }
 
+        public async Task<IEnumerable<MessageDto>> ReadMessages(string chatId, string userId)
+        {
+            if (string.IsNullOrEmpty(chatId) || string.IsNullOrEmpty(userId))
+                return Enumerable.Empty<MessageDto>();
+
+            var chat = await _dbContext.Chats.Where(c => c.Id == int.Parse(chatId))
+                                             .Include(c => c.User1)
+                                             .Include(c => c.User2)
+                                             .Include(c => c.Messages)
+                                             .ThenInclude(m => m.Status)
+                                             .FirstOrDefaultAsync();
+
+            if (chat is not null && chat.Messages is not null && chat.Messages.Count > 0)
+            {
+                foreach (var message in chat.Messages)
+                {
+                    if (message.SenderId != userId)
+                        message.StatusId = 2;
+                }
+                await _dbContext.SaveChangesAsync();
+                var result = _mapper.Map<IEnumerable<MessageDto>>(chat.Messages);
+                await Clients.Group(chatId).SendAsync("ReceiveReadMessages", result);
+                return result;
+            }
+            return Enumerable.Empty<MessageDto>();
+        }
+
         public override Task OnDisconnectedAsync(Exception exception)
         {
             if (_connections.TryGetValue(Context.ConnectionId, out _))
