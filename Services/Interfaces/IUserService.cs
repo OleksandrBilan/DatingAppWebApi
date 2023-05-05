@@ -18,5 +18,7 @@ namespace DatingApp.Services.Interfaces
         public Task<Image> GetUserImageAsync(string userId);
 
         public void DeleteUserImage(string userId);
+
+        Task CreateVipRequestAsync(string userId, int subscriptionTypeId, string additionalInfo);
     }
 }

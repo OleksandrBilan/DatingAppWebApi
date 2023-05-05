@@ -28,6 +28,10 @@ namespace DatingApp.DB
         public DbSet<Message> Messages { get; set; }
         public DbSet<MessageStatus> MessageStatuses { get; set; }
 
+        public DbSet<VipRequest> VipRequests { get; set; }
+        public DbSet<SubscriptionType> SubscriptionTypes { get; set; }
+        public DbSet<UserSubscription> UsersSubscriptions { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -49,6 +53,33 @@ namespace DatingApp.DB
             builder.Entity<MessageStatus>().HasData(
                 new MessageStatus { Id = 1, Name = "Sent" },
                 new MessageStatus { Id = 2, Name = "Read" }
+            );
+
+            builder.Entity<SubscriptionType>().HasData(
+                new SubscriptionType 
+                { 
+                    Id = 1,
+                    Name = "Monthly",
+                    Description = "Monthly subscription to renew each month",
+                    Months = 1,
+                    Price = 4.99
+                },
+                new SubscriptionType
+                {
+                    Id = 2,
+                    Name = "Quarterly",
+                    Description = "Quarterly subscription to renew each quarter",
+                    Months = 3,
+                    Price = 9.99
+                },
+                new SubscriptionType
+                {
+                    Id = 3,
+                    Name = "Half-year",
+                    Description = "Half-year subscription to renew each six months",
+                    Months = 6,
+                    Price = 14.99
+                }
             );
 
             builder.Entity<User>()

@@ -10,5 +10,7 @@ namespace DatingApp.Services.Interfaces
         Task<IEnumerable<Country>> GetCountriesAsync();
 
         Task<IEnumerable<City>> GetCitiesAsync();
+
+        Task<IEnumerable<SubscriptionType>> GetSubscriptionTypesAsync();
     }
 }

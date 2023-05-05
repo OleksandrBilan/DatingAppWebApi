@@ -4,6 +4,7 @@ using DatingApp.DB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DatingApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230505075346_AddUserVipRequests")]
+    partial class AddUserVipRequests
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -298,57 +300,6 @@ namespace DatingApp.Migrations
                         });
                 });
 
-            modelBuilder.Entity("DatingApp.DB.Models.UserRelated.SubscriptionType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Months")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SubscriptionTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "Monthly subscription to renew each month",
-                            Months = 1,
-                            Name = "Monthly",
-                            Price = 4.9900000000000002
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "Quarterly subscription to renew each quarter",
-                            Months = 3,
-                            Name = "Quarterly",
-                            Price = 9.9900000000000002
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Description = "Half-year subscription to renew each six months",
-                            Months = 6,
-                            Name = "Half-year",
-                            Price = 14.99
-                        });
-                });
-
             modelBuilder.Entity("DatingApp.DB.Models.UserRelated.User", b =>
                 {
                     b.Property<string>("Id")
@@ -438,35 +389,6 @@ namespace DatingApp.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("DatingApp.DB.Models.UserRelated.UserSubscription", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("CreateDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("ExpireDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("SubscriptionTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SubscriptionTypeId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UsersSubscriptions");
-                });
-
             modelBuilder.Entity("DatingApp.DB.Models.UserRelated.VipRequest", b =>
                 {
                     b.Property<int>("Id")
@@ -481,15 +403,10 @@ namespace DatingApp.Migrations
                     b.Property<DateTime>("CreateDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("SubscriptionTypeId")
-                        .HasColumnType("int");
-
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("SubscriptionTypeId");
 
                     b.HasIndex("UserId");
 
@@ -770,36 +687,11 @@ namespace DatingApp.Migrations
                     b.Navigation("Sex");
                 });
 
-            modelBuilder.Entity("DatingApp.DB.Models.UserRelated.UserSubscription", b =>
-                {
-                    b.HasOne("DatingApp.DB.Models.UserRelated.SubscriptionType", "SubscriptionType")
-                        .WithMany()
-                        .HasForeignKey("SubscriptionTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DatingApp.DB.Models.UserRelated.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("SubscriptionType");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("DatingApp.DB.Models.UserRelated.VipRequest", b =>
                 {
-                    b.HasOne("DatingApp.DB.Models.UserRelated.SubscriptionType", "SubscriptionType")
-                        .WithMany()
-                        .HasForeignKey("SubscriptionTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("DatingApp.DB.Models.UserRelated.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
-
-                    b.Navigation("SubscriptionType");
 
                     b.Navigation("User");
                 });

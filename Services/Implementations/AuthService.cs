@@ -139,6 +139,17 @@ namespace DatingApp.Services.Implementations
                 var user = await _userManager.FindByEmailAsync(email);
                 await _userService.PopulateUserInfo(user);
 
+                var subscription = await _dbContext.UsersSubscriptions.FirstOrDefaultAsync(s => s.UserId == user.Id);
+                if (subscription is not null)
+                {
+                    if (subscription.ExpireDateTime < DateTime.Now)
+                    {
+                        _dbContext.UsersSubscriptions.Remove(subscription);
+                        await _userManager.RemoveFromRoleAsync(user, "VIP");
+                        await _dbContext.SaveChangesAsync();
+                    }
+                }
+
                 return user;
             }
             else

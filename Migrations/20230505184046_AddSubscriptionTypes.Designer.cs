@@ -4,6 +4,7 @@ using DatingApp.DB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DatingApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230505184046_AddSubscriptionTypes")]
+    partial class AddSubscriptionTypes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -327,7 +329,7 @@ namespace DatingApp.Migrations
                         {
                             Id = 1,
                             Description = "Monthly subscription to renew each month",
-                            Months = 1,
+                            Months = 0,
                             Name = "Monthly",
                             Price = 4.9900000000000002
                         },
@@ -335,15 +337,15 @@ namespace DatingApp.Migrations
                         {
                             Id = 2,
                             Description = "Quarterly subscription to renew each quarter",
-                            Months = 3,
+                            Months = 0,
                             Name = "Quarterly",
                             Price = 9.9900000000000002
                         },
                         new
                         {
                             Id = 3,
-                            Description = "Half-year subscription to renew each six months",
-                            Months = 6,
+                            Description = "Monthly subscription to renew each six months",
+                            Months = 0,
                             Name = "Half-year",
                             Price = 14.99
                         });

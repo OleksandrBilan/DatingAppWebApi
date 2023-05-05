@@ -130,5 +130,22 @@ namespace DatingApp.Services.Implementations
                 Directory.Delete(userFolderPath, true);
             }
         }
+
+        public async Task CreateVipRequestAsync(string userId, int subscriptionTypeId, string additionalInfo)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user is not null)
+            {
+                var newRequest = new VipRequest 
+                { 
+                    UserId = userId, 
+                    SubscriptionTypeId = subscriptionTypeId, 
+                    AdditionalInfo = additionalInfo, 
+                    CreateDateTime = DateTime.Now 
+                };
+                _dbContext.VipRequests.Add(newRequest);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
     }
 }

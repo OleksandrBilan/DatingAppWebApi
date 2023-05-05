@@ -29,5 +29,10 @@ namespace DatingApp.Services.Implementations
         {
             return await _dbContext.Sex.ToListAsync();
         }
+
+        public async Task<IEnumerable<SubscriptionType>> GetSubscriptionTypesAsync()
+        {
+            return await _dbContext.SubscriptionTypes.ToListAsync();
+        }
     }
 }

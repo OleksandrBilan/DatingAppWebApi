@@ -100,9 +100,20 @@ namespace DatingApp.Controllers
 
         [HttpDelete("deleteImage")]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
-        public IActionResult DeleteUserImageAsync(string userId)
+        public IActionResult DeleteUserImage(string userId)
         {
             _userService.DeleteUserImage(userId);
+            return Ok();
+        }
+
+        [HttpPost("createVipRequest")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
+        public async Task<IActionResult> CreateVipRequestAsync([FromBody] CreateVipRequestDto request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            await _userService.CreateVipRequestAsync(request.UserId, request.SubscriptionTypeId, request.AdditionalInfo);
             return Ok();
         }
     }

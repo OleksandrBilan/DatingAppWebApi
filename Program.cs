@@ -61,6 +61,7 @@ builder.Services.AddTransient<IQuestionnaireService, QuestionnaireService>();
 builder.Services.AddTransient<IRecommendationsService, RecommendationsService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IAuthService, AuthService>();
+builder.Services.AddTransient<IAdminService, AdminService>();
 builder.Services.AddTransient<EmailHelper>();
 
 builder.Services.AddSingleton<IDictionary<string, UserConnection>>(options => new Dictionary<string, UserConnection>());
