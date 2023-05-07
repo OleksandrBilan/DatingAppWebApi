@@ -42,8 +42,8 @@ namespace DatingApp.Controllers
 
             try
             {
-                await _recommendationsService.AddUserLikeAsync(request.LikingUserId, request.LikedUserId);
-                return Ok();
+                var result = await _recommendationsService.AddUserLikeAsync(request.LikingUserId, request.LikedUserId);
+                return Ok(result);
             }
             catch (Exception ex)
             {

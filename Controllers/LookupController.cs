@@ -40,5 +40,13 @@ namespace DatingApp.Controllers
             var result = _mapper.Map<IEnumerable<CityDto>>(cities);
             return Ok(result);
         }
+
+        [HttpGet("getSubscriptionTypes")]
+        public async Task<IActionResult> GetSubscriptionTypesAsync()
+        {
+            var subscriptionTypes = await _lookupService.GetSubscriptionTypesAsync();
+            var result = _mapper.Map<IEnumerable<SubscriptionTypeDto>>(subscriptionTypes);
+            return Ok(result);
+        }
     }
 }

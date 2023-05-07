@@ -1,18 +1,30 @@
-﻿using DatingApp.DTOs.Admin;
+﻿using AutoMapper;
+using DatingApp.DTOs.Admin;
 using DatingApp.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DatingApp.Controllers
 {
+    [Route("admin")]
     [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly IAdminService _adminService;
+        private readonly IMapper _mapper;
 
-        public AdminController(IAdminService adminService)
+        public AdminController(IAdminService adminService, IMapper mapper)
         {
             _adminService = adminService;
+            _mapper = mapper;
+        }
+
+        [HttpGet("getVipRequests")]
+        public async Task<IActionResult> GetVipRequestsAsync()
+        {
+            var requests = await _adminService.GetVipRequestsAsync();
+            var result = _mapper.Map<IEnumerable<VipRequestDto>>(requests);
+            return Ok(result);
         }
 
         [HttpPost("approveVipRequest")]

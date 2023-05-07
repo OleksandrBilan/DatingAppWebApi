@@ -14,6 +14,8 @@ namespace DatingApp.Mapping
             CreateMap<CityDto, City>().ReverseMap();
 
             CreateMap<CountryDto, Country>().ReverseMap();
+
+            CreateMap<SubscriptionType, SubscriptionTypeDto>();
         }
     }
 }

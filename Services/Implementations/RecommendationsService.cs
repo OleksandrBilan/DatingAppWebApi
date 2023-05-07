@@ -1,9 +1,11 @@
 ﻿using DatingApp.DB;
 using DatingApp.DB.Models.Chats;
 using DatingApp.DB.Models.Recommendations;
+using DatingApp.DB.Models.UserRelated;
 using DatingApp.DTOs.Recommendations;
 using DatingApp.Services.Helpers;
 using DatingApp.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace DatingApp.Services.Implementations
@@ -11,10 +13,12 @@ namespace DatingApp.Services.Implementations
     public class RecommendationsService : IRecommendationsService
     {
         private readonly AppDbContext _dbContext;
+        private readonly UserManager<User> _userManager;
 
-        public RecommendationsService(AppDbContext dbContext)
+        public RecommendationsService(AppDbContext dbContext, UserManager<User> userManager)
         {
             _dbContext = dbContext;
+            _userManager = userManager;
         }
 
         public IEnumerable<RecommendedUser> GetRecommendedUsers(FiltersDto filters)
@@ -30,10 +34,10 @@ namespace DatingApp.Services.Implementations
 
         #region Likes
 
-        public async Task AddUserLikeAsync(string likingUserId, string likedUserId)
+        public async Task<bool> AddUserLikeAsync(string likingUserId, string likedUserId)
         {
-            bool likingUserExists = await _dbContext.Users.AnyAsync(u => u.Id == likingUserId);
-            if (!likingUserExists)
+            var likingUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == likingUserId);
+            if (likingUser is null)
                 throw new ArgumentException("No user with such id", nameof(likingUserId));
 
             bool likedUserExists = await _dbContext.Users.AnyAsync(u => u.Id == likedUserId);
@@ -43,6 +47,16 @@ namespace DatingApp.Services.Implementations
             bool sameRecordExists = await _dbContext.UsersLikes.AnyAsync(x => x.LikingUserId == likingUserId && x.LikedUserId == likedUserId);
             if (!sameRecordExists)
             {
+                bool isVipUser = (await _userManager.GetRolesAsync(likingUser)).Contains("VIP");
+                if (!isVipUser)
+                {
+                    var now = DateTime.Now;
+                    int todayLikesCount = await _dbContext.UsersLikes.CountAsync(x =>
+                        x.LikingUserId == likingUserId && x.DateTime.Year == now.Year && x.DateTime.Month == now.Month && x.DateTime.Day == now.Day);
+                    if (todayLikesCount >= 10)
+                        return false;
+                }
+
                 var mutualLike = await _dbContext.UsersLikes.FirstOrDefaultAsync(x => x.LikingUserId == likedUserId && x.LikedUserId == likingUserId);
                 if (mutualLike is not null)
                 {
@@ -60,6 +74,7 @@ namespace DatingApp.Services.Implementations
                 }
                 await _dbContext.SaveChangesAsync();
             }
+            return true;
         }
 
         private IEnumerable<RecommendedUser> CalculateSimilarityScore(IEnumerable<RecommendedUser> recommendedUsers, string currentUserId)

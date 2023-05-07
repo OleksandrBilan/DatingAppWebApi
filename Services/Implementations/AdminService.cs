@@ -19,7 +19,10 @@ namespace DatingApp.Services.Implementations
 
         public async Task<IEnumerable<VipRequest>> GetVipRequestsAsync()
         {
-            return await _dbContext.VipRequests.OrderBy(r => r.CreateDateTime).ToListAsync();
+            return await _dbContext.VipRequests.Include(r => r.User)
+                                               .Include(r => r.SubscriptionType)
+                                               .OrderBy(r => r.CreateDateTime)
+                                               .ToListAsync();
         }
 
         public async Task ApproveVipRequestAsync(int requestId)
