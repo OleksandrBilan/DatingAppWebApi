@@ -21,7 +21,7 @@ namespace DatingApp.Services.Helpers
                                   .SelectMany(
                                       x => dbContext.Roles.Where(role => role.Id == x.RoleMapEntry.RoleId).DefaultIfEmpty(),
                                       (x, role) => new { User = x.User, Role = role })
-                                  .Where(x => x.Role.Name == "User" && x.User.EmailConfirmed && x.User.Id != filters.UserId)
+                                  .Where(x => (x.Role.Name == "User" || x.Role.Name == "VIP") && x.User.EmailConfirmed && x.User.Id != filters.UserId)
                                   .Select(x => x.User);
         }
 
